@@ -1,0 +1,23 @@
+{
+  "name": "crypto-bot",
+  "version": "1.0.0",
+  "description": "bot for crypto trading strategies",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adam-Harte/crypto-bot.git"
+  },
+  "author": "Adam Harte",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Adam-Harte/crypto-bot/issues"
+  },
+  "homepage": "https://github.com/Adam-Harte/crypto-bot#readme",
+  "dependencies": {
+    "technicalindicators": "^3.1.0",
+    "ws": "^7.4.5"
+  }
+}
