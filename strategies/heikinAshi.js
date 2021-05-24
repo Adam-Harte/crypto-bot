@@ -1,29 +1,50 @@
-const calculateHeikinAshi = (heikinAshiCandle, results, open, high, low, close, inPosition) => {
-  results.push(heikinAshiCandle.nextValue({
+const ta = require('technicalindicators');
+
+let inPositionHeikinAshi = false;
+
+const inputHeikinAshi = {
+  open: [],
+  high: [],
+  low: [],
+  close: [],
+  timestamp: [],
+  volume: []
+};
+
+const heikinAshiResults = [];
+const heikinAshiCandle = new ta.HeikinAshi(inputHeikinAshi);
+
+const calculateHeikinAshi = (open, high, low, close) => {
+  heikinAshiResults.push(heikinAshiCandle.nextValue({
     open: parseFloat(open),
     high: parseFloat(high),
     low: parseFloat(low),
     close: parseFloat(close)
   }));
 
-  console.log(results[results.length - 1]);
+  if (heikinAshiResults.length > 2) {
+    const previousHeikinAshi = heikinAshiResults[heikinAshiResults.length - 2];
+    const latestHeikinAshi = heikinAshiResults[heikinAshiResults.length - 1];
 
-  if (results.length > 2) {
-    if (results[results.length - 1].close > results[results.length - 2].close && results[results.length - 1].open >= results[results.length - 1].low) {
+    const bullishIndicator = latestHeikinAshi.close > previousHeikinAshi.close && latestHeikinAshi.close > latestHeikinAshi.open && (parseFloat(((latestHeikinAshi.close - latestHeikinAshi.open) / latestHeikinAshi.close) * 100 > 0.8).toFixed(3));
+    const buySignal = bullishIndicator && latestHeikinAshi.open >= latestHeikinAshi.low;
+    const sellSignal = latestHeikinAshi.close < previousHeikinAshi.close && latestHeikinAshi.open > latestHeikinAshi.close && latestHeikinAshi.open >= latestHeikinAshi.high;
+
+    if (buySignal) {
       console.log('Entering upward trend. Bullish!');
-      if (!inPosition) {
+      if (!inPositionHeikinAshi) {
         console.log(`Buy at ${close}`);
         // buy binance order logic here
-        inPosition = true;
+        inPositionHeikinAshi = true;
       }
     }
 
-    if (results[results.length - 1].close < results[results.length - 2].close && results[results.length - 1].open > results[results.length - 1].close && results[results.length - 1].open >= results[results.length - 1].high) {
+    if (sellSignal) {
       console.log('Entering downward trend. Bearish!');
-      if (inPosition) {
+      if (inPositionHeikinAshi) {
         console.log(`sell at ${close}`);
         // sell binance order logic here
-        inPosition = false;
+        inPositionHeikinAshi = false;
       }
     }
   }
