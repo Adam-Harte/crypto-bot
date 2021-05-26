@@ -1,9 +1,9 @@
 const webSocket = require('ws');
 
-const calculateRSI = require('./strategies/rsi');
-const calculateHeikinAshi = require('./strategies/heikinAshi');
-const calculateBollingerBands = require('./strategies/bollingerBands');
-const calculateMacd = require('./strategies/macd');
+const calculateRSI = require('./indicators/rsi');
+const calculateHeikinAshi = require('./indicators/heikinAshi');
+const calculateBollingerBands = require('./indicators/bollingerBands');
+const calculateMacd = require('./indicators/macd');
 
 const stream = 'wss://stream.binance.com:9443/ws/btcusdt@kline_5m';
 
