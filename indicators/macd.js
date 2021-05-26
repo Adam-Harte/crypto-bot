@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const ta = require('technicalindicators');
 
 const inputMACD = {
@@ -10,6 +12,8 @@ const inputMACD = {
 }
 
 let inPositionMacd = false;
+let lastBuy;
+let profit = 0;
 
 const calculateMacd = (close, period) => {
   inputMACD.values.push(parseFloat(close));
@@ -25,7 +29,13 @@ const calculateMacd = (close, period) => {
 
         if (!inPositionMacd) {
           console.log(`buy at ${close}`);
+          try {
+            fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/macd.txt', `buy at ${close}` + "\n", { flag: 'a+' });
+          } catch (err) {
+              console.error(err)
+          }
           // buy binance order logic here
+          lastBuy = close;
           inPositionMacd = true;
         }
       }
@@ -35,8 +45,19 @@ const calculateMacd = (close, period) => {
 
         if (inPositionMacd) {
           console.log(`sell at ${close}`);
+          try {
+            fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/macd.txt', `sell at ${close}` + "\n", { flag: 'a+' });
+          } catch (err) {
+              console.error(err)
+          }
           // sell binance order logic here
+          profit = close - lastBuy;
           inPositionMacd = false;
+          try {
+            fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/macd.txt', `profit at ${profit}` + "\n", { flag: 'a+' });
+          } catch (err) {
+              console.error(err)
+          }
         }
       }
     }

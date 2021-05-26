@@ -1,6 +1,11 @@
+const fs = require('fs');
+
 const ta = require('technicalindicators');
 
 let inPositionStochastic = false;
+let lastBuy;
+let profit = 0;
+
 const inputStochastic = {
   high: [],
   low: [],
@@ -22,7 +27,13 @@ const calculateStochastic = (high, low, close) => {
       console.log('stochastic lines indicate oversold!');
       if (!inPositionStochastic) {
         console.log(`buy at ${close}`);
+        try {
+          fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/stochastic.txt', `buy at ${close}` + "\n", { flag: 'a+' });
+        } catch (err) {
+            console.error(err)
+        }
         // buy binance order logic here
+        lastBuy = close;
         inPositionStochastic = true;
       }
     }
@@ -31,8 +42,19 @@ const calculateStochastic = (high, low, close) => {
       console.log('stochastic lines indicate overbought!');
       if (inPositionStochastic) {
         console.log(`sell at ${close}`);
+        try {
+          fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/stochastic.txt', `sell at ${close}` + "\n", { flag: 'a+' });
+        } catch (err) {
+            console.error(err)
+        }
         // sell binance order logic here
+        profit = close - lastBuy;
         inPositionStochastic = false;
+        try {
+          fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/stochastic.txt', `profit at ${profit}` + "\n", { flag: 'a+' });
+        } catch (err) {
+            console.error(err)
+        }
       }
     }
   }

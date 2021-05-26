@@ -1,6 +1,10 @@
+const fs = require('fs');
+
 const ta = require('technicalindicators');
 
 let inPositionBollinger = false;
+let lastBuy;
+let profit = 0;
 
 const inputBollingerBands = {
   period: 14,
@@ -19,7 +23,13 @@ const calculateBollingerBands = (close) => {
         console.log('broke through bollinger lower!');
         if (!inPositionBollinger) {
           console.log(`buy at ${close}`);
+          try {
+            fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/bollingerBands.txt', `buy at ${close}` + "\n", { flag: 'a+' });
+          } catch (err) {
+              console.error(err)
+          }
           // buy binance order logic here
+          lastBuy = close;
           inPositionBollinger = true;
         }
       }
@@ -28,8 +38,19 @@ const calculateBollingerBands = (close) => {
         console.log('broke through bollinger upper!');
         if (inPositionBollinger) {
           console.log(`sell at ${close}`);
+          try {
+            fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/bollingerBands.txt', `sell at ${close}` + "\n", { flag: 'a+' });
+          } catch (err) {
+              console.error(err)
+          }
           // sell binance order logic
+          profit = close - lastBuy;
           inPositionBollinger = false;
+          try {
+            fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/bollingerBands.txt', `profit at ${profit}` + "\n", { flag: 'a+' });
+          } catch (err) {
+              console.error(err)
+          }
         }
       }
     }

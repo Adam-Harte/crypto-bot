@@ -1,6 +1,11 @@
+const fs = require('fs');
+
 const ta = require('technicalindicators');
 
 let inPositionIchimoku = false;
+let lastBuy;
+let profit = 0;
+
 const ichimokuInput = {
   high: [],
   low: [],
@@ -22,7 +27,13 @@ const calculateIchimoku = (high, low, close) => {
       console.log('ichimoku cloud has detected an uptrend!');
       if (close > latestIchimoku.spanA && !inPositionIchimoku) {
         console.log(`buy at ${close}`);
+        try {
+          fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/ichimoku.txt', `buy at ${close}` + "\n", { flag: 'a+' });
+        } catch (err) {
+            console.error(err)
+        }
         // buy binance order logic here
+        lastBuy = close;
         inPositionIchimoku = true;
       }
     }
@@ -31,8 +42,19 @@ const calculateIchimoku = (high, low, close) => {
       console.log('ichimoku cloud has detected a downtrend!');
       if (close < latestIchimoku.spanA && inPositionIchimoku) {
         console.log(`sell at ${close}`);
+        try {
+          fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/ichimoku.txt', `sell at ${close}` + "\n", { flag: 'a+' });
+        } catch (err) {
+            console.error(err)
+        }
         // sell binance order logic here
+        profit = close - lastBuy;
         inPositionIchimoku = false;
+        try {
+          fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/ichimoku.txt', `profit at ${profit}` + "\n", { flag: 'a+' });
+        } catch (err) {
+            console.error(err)
+        }
       }
     }
   }

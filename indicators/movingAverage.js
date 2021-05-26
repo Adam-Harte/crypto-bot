@@ -1,6 +1,10 @@
+const fs = require('fs');
+
 const ta = require('technicalindicators');
 
 let inPositionMovingAverage = false;
+let lastBuy;
+let profit = 0;
 
 const input20ma = {
   period: 20,
@@ -26,7 +30,13 @@ const calculateMovingAverage = (close) => {
       console.log('The 20 ema line has crossed above the 50 ema line!');
       if (!inPositionMovingAverage) {
         console.log(`buy at ${close}`);
+        try {
+          fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/movingAverage.txt', `buy at ${close}` + "\n", { flag: 'a+' });
+        } catch (err) {
+            console.error(err)
+        }
         // buy binance order logic here
+        lastBuy = close;
         inPositionMovingAverage = true;
       }
     }
@@ -35,8 +45,19 @@ const calculateMovingAverage = (close) => {
       console.log('the 20 ema line has crossed below the 50 ema line!');
       if (inPositionMovingAverage) {
         console.log(`sell at ${close}`);
+        try {
+          fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/movingAverage.txt', `sell at ${close}` + "\n", { flag: 'a+' });
+        } catch (err) {
+            console.error(err)
+        }
         // sell binance order logic
+        profit = close - lastBuy;
         inPositionMovingAverage = false;
+        try {
+          fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/movingAverage.txt', `profit at ${profit}` + "\n", { flag: 'a+' });
+        } catch (err) {
+            console.error(err)
+        }
       }
     }
   }

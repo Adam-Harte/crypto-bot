@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const ta = require('technicalindicators');
 
 const atrInput = {
@@ -18,14 +20,29 @@ const calculateAtr = (high, low, close) => {
 
     if (latestAtr < 40) {
       console.log('atr detects low volatility!');
+      try {
+        fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/atr.txt', 'atr detects low volatility!' + "\n", { flag: 'a+' });
+      } catch (err) {
+          console.error(err)
+      }
     }
 
     if (latestAtr > 40 && latestAtr < 60) {
       console.log('atr detects mid volatility!');
+      try {
+        fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/atr.txt', 'atr detects mid volatility!' + "\n", { flag: 'a+' });
+      } catch (err) {
+          console.error(err)
+      }
     }
 
     if (latestAtr > 60) {
       console.log('atr detects high volatility!');
+      try {
+        fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/atr.txt', 'atr detects high volatility!' + "\n", { flag: 'a+' });
+      } catch (err) {
+          console.error(err)
+      }
     }
   }
 };
