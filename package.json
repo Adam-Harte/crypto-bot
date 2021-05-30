@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/Adam-Harte/crypto-bot#readme",
   "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^10.0.0",
+    "qs": "^6.10.1",
     "technicalindicators": "^3.1.0",
     "ws": "^7.4.5"
   }
