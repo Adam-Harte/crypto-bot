@@ -1,11 +1,8 @@
 const webSocket = require('ws');
 
-const calculateRSI = require('./indicators/rsi');
-const calculateHeikinAshi = require('./indicators/heikinAshi');
-const calculateBollingerBands = require('./indicators/bollingerBands');
-const calculateMacd = require('./indicators/macd');
+const heikinAshiRsiStrategy = require('./strategies/heikinAshi-rsi');
 
-const stream = 'wss://stream.binance.com:9443/ws/btcusdt@kline_5m';
+const stream = 'wss://testnet.binance.vision/ws/btcusdt@kline_15m';
 
 const ws = new webSocket(stream);
 
@@ -17,16 +14,13 @@ ws.on('message', (message) => {
   const data = JSON.parse(message);
   const candle = data['k'];
   const isCandleClosed = candle['x'];
-  const open = candle['o'];
-  const high = candle['h'];
-  const low = candle['l'];
-  const close = candle['c'];
+  const open = parseFloat(candle['o']);
+  const high = parseFloat(candle['h']);
+  const low = parseFloat(candle['l']);
+  const close = parseFloat(candle['c']);
 
   if (isCandleClosed) {
-    calculateRSI(close);
-    calculateHeikinAshi(open, high, low, close);
-    calculateBollingerBands(close);
-    calculateMacd(close, 40);
+    heikinAshiRsiStrategy(open, high, low, close);
   }
 });
 
