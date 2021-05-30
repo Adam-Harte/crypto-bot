@@ -1,10 +1,9 @@
-const fs = require('fs');
-
 const ta = require('technicalindicators');
 
-let inPosition = false;
-let lastBuy;
-let profit = 0;
+const api = require('../testApi');
+
+let inLongPosition = false;
+let inShortPosition = false;
 
 const inputHeikinAshi = {
   open: [],
@@ -23,14 +22,26 @@ const inputRSI = {
 const heikinAshiResults = [];
 const heikinAshiCandle = new ta.HeikinAshi(inputHeikinAshi);
 
+api.getCandleSticks('BTCUSDT', '15m', 20).then(res => {
+  inputHeikinAshi.open = res.data.map(d => parseFloat(d[1]));
+  inputHeikinAshi.high = res.data.map(d => parseFloat(d[2]));
+  inputHeikinAshi.low = res.data.map(d => parseFloat(d[3]));
+  inputHeikinAshi.close = res.data.map(d => parseFloat(d[4]));
+  inputHeikinAshi.volume = res.data.map(d => d[6]);
+
+  inputRSI.values = res.data.map(d => parseFloat(d[4])),
+
+  heikinAshiCandle = new ta.HeikinAshi(inputHeikinAshi);
+});
+
 const heikinAshiRsiStrategy = (open, high, low, close) => {
   heikinAshiResults.push(heikinAshiCandle.nextValue({
-    open: parseFloat(open),
-    high: parseFloat(high),
-    low: parseFloat(low),
-    close: parseFloat(close)
+    open: open,
+    high: high,
+    low: low,
+    close: close
   }));
-  inputRSI.values.push(parseFloat(close));
+  inputRSI.values.push(close);
 
   if (heikinAshiResults.length > inputRSI.period) {
     const rsi = ta.RSI.calculate(inputRSI);
@@ -40,58 +51,37 @@ const heikinAshiRsiStrategy = (open, high, low, close) => {
     const latestRsi = rsi[rsi.length - 1];
     const previousRsi = rsi[rsi.length - 2];
 
-    const previousCandleRedDoji = ((parseFloat(((previousHeikinAshi.open - previousHeikinAshi.close) / previousHeikinAshi.open) * 100).toFixed(3)) < 0.3) && (previousHeikinAshi.high > previousHeikinAshi.open) && (previousHeikinAshi.low < previousHeikinAshi.close);
-    const latestCandleRedDoji = ((parseFloat(((latestHeikinAshi.open - latestHeikinAshi.close) / latestHeikinAshi.open) * 100).toFixed(3)) < 0.3) && (latestHeikinAshi.high > latestHeikinAshi.open) && (latestHeikinAshi.low < latestHeikinAshi.close);
-    const previousCandleGreenDoji = ((parseFloat(((previousHeikinAshi.close - previousHeikinAshi.open) / previousHeikinAshi.close) * 100).toFixed(3)) < 0.3) && (previousHeikinAshi.high > previousHeikinAshi.close) && (previousHeikinAshi.low < previousHeikinAshi.open);
-    const latestCandleGreenDoji = ((parseFloat(((latestHeikinAshi.close - latestHeikinAshi.open) / latestHeikinAshi.close) * 100).toFixed(3)) < 0.3) && (latestHeikinAshi.high > latestHeikinAshi.close) && (latestHeikinAshi.low < latestHeikinAshi.open);
-
     const oldCandleRed = oldHeikinAshi.close < oldHeikinAshi.open;
     const previousCandleRed = previousHeikinAshi.close < previousHeikinAshi.open;
-    const previousCandleStrongRed = previousHeikinAshi.close < previousHeikinAshi.open && (parseFloat(((previousHeikinAshi.open - previousHeikinAshi.close) / previousHeikinAshi.open) * 100).toFixed(3) > 0.8) && previousHeikinAshi.open >= previousHeikinAshi.high;
-    const latestCandleStrongRed = latestHeikinAshi.close < latestHeikinAshi.open && (parseFloat(((latestHeikinAshi.open - latestHeikinAshi.close) / latestHeikinAshi.open) * 100).toFixed(3) > 0.8) && latestHeikinAshi.open >= latestHeikinAshi.high;
+    const previousCandleStrongRed = previousHeikinAshi.close < previousHeikinAshi.open && (parseFloat(((previousHeikinAshi.open - previousHeikinAshi.close) / previousHeikinAshi.open) * 100).toFixed(3) > 0.006) && previousHeikinAshi.open >= previousHeikinAshi.high;
+    const latestCandleStrongRed = latestHeikinAshi.close < latestHeikinAshi.open && (parseFloat(((latestHeikinAshi.open - latestHeikinAshi.close) / latestHeikinAshi.open) * 100).toFixed(3) > 0.006) && latestHeikinAshi.open >= latestHeikinAshi.high;
     const oldCandleGreen = oldHeikinAshi.close > oldHeikinAshi.open;
-    const oldCandleStrongGreen = oldHeikinAshi.close > oldHeikinAshi.open && (parseFloat(((oldHeikinAshi.close - oldHeikinAshi.open) / oldHeikinAshi.close) * 100).toFixed(3) > 0.8) && oldHeikinAshi.open >= oldHeikinAshi.low;
     const previousCandleGreen = previousHeikinAshi.close > previousHeikinAshi.open;
-    const previousCandleStrongGreen = previousHeikinAshi.close > previousHeikinAshi.open && (parseFloat(((previousHeikinAshi.close - previousHeikinAshi.open) / previousHeikinAshi.close) * 100).toFixed(3) > 0.8) && previousHeikinAshi.open >= previousHeikinAshi.low;
-    const latestCandleStrongGreen = latestHeikinAshi.close > latestHeikinAshi.open && (parseFloat(((latestHeikinAshi.close - latestHeikinAshi.open) / latestHeikinAshi.close) * 100).toFixed(3) > 0.8) && latestHeikinAshi.open >= latestHeikinAshi.low;
+    const previousCandleStrongGreen = previousHeikinAshi.close > previousHeikinAshi.open && (parseFloat(((previousHeikinAshi.close - previousHeikinAshi.open) / previousHeikinAshi.close) * 100).toFixed(3) > 0.006) && previousHeikinAshi.open >= previousHeikinAshi.low;
+    const latestCandleStrongGreen = latestHeikinAshi.close > latestHeikinAshi.open && (parseFloat(((latestHeikinAshi.close - latestHeikinAshi.open) / latestHeikinAshi.close) * 100).toFixed(3) > 0.006) && latestHeikinAshi.open >= latestHeikinAshi.low;
 
     const bullishIndicator = (oldCandleRed && previousCandleStrongGreen && latestCandleStrongGreen) || (oldCandleRed && previousCandleGreen && latestCandleStrongGreen);
-    const bearishIndicator = (oldCandleGreen && previousCandleRed && latestCandleStrongRed) || (oldCandleGreen && previousCandleStrongRed) || (oldCandleStrongGreen && previousCandleStrongGreen && latestCandleStrongGreen);
+    const bearishIndicator = (oldCandleGreen && previousCandleRed && latestCandleStrongRed) || (oldCandleGreen && previousCandleStrongRed) || (previousCandleGreen && latestCandleStrongRed);
     const buySignal = bullishIndicator && previousRsi < 50 && latestRsi > 50;
-    const sellSignal = (bearishIndicator && previousRsi > 50 && latestRsi < 50) || (previousCandleRedDoji && latestCandleGreenDoji) || (previousCandleGreenDoji && latestCandleRedDoji) || (previousCandleRedDoji && latestCandleRedDoji) || (previousCandleGreenDoji && latestCandleGreenDoji);
+    const sellSignal = bearishIndicator && previousRsi > 50 && latestRsi < 50;
 
     if (buySignal) {
-      console.log('Entering upward trend. Bullish!');
-      if (!inPosition) {
-        console.log(`Buy at ${close}`);
-        try {
-          fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/heikinAshi-rsi.txt', `buy at ${close}` + "\n", { flag: 'a+' });
-        } catch (err) {
-            console.error(err)
-        }
+      if (!inLongPosition) {
         // buy binance order logic here
-        lastBuy = close;
-        inPosition = true;
+        api.limitOrder('BTCUSDT', 'BUY', 0.2, close);
+        api.ocoOrder('BTCUSDT', 'SELL', 0.2, close * 1.2, close * 0.99, close * 0.98);
+        inLongPosition = true;
+        inShortPosition = false;
       }
     }
 
     if (sellSignal) {
-      console.log('Entering downward trend. Bearish!');
-      if (inPosition) {
-        console.log(`sell at ${close}`);
-        try {
-          fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/heikinAshi-rsi.txt', `sell at ${close}` + "\n", { flag: 'a+' });
-        } catch (err) {
-            console.error(err)
-        }
+      if (!inShortPosition) {
         // sell binance order logic here
-        profit += close - lastBuy;
-        inPosition = false;
-        try {
-          fs.writeFileSync('C:/Users/adamh/Desktop/crypto-bot/logs/heikinAshi-rsi.txt', `profit at ${profit}` + "\n", { flag: 'a+' });
-        } catch (err) {
-            console.error(err)
-        }
+        api.limitOrder('BTCUSDT', 'SELL', 0.2, close);
+        api.ocoOrder('BTCUSDT', 'BUY', 0.2, close * 0.98, close * 1.01, close * 1.02);
+        inShortPosition = true;
+        inLongPosition = false;
       }
     }
   }
