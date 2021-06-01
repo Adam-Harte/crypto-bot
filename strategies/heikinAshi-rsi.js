@@ -29,23 +29,24 @@ const inputAtr = {
 const heikinAshiResults = [];
 let heikinAshiCandle;
 
-api.getCandleSticks('BTCUSDT', '15m', 20).then(res => {
-  inputHeikinAshi.open = res.data.map(d => parseFloat(d[1]));
-  inputHeikinAshi.high = res.data.map(d => parseFloat(d[2]));
-  inputHeikinAshi.low = res.data.map(d => parseFloat(d[3]));
-  inputHeikinAshi.close = res.data.map(d => parseFloat(d[4]));
-  inputHeikinAshi.volume = res.data.map(d => d[6]);
+// api.getCandleSticks('BTCUSDT', '15m', 20).then(res => {
+//   inputHeikinAshi.open = res.data.map(d => parseFloat(d[1]));
+//   inputHeikinAshi.high = res.data.map(d => parseFloat(d[2]));
+//   inputHeikinAshi.low = res.data.map(d => parseFloat(d[3]));
+//   inputHeikinAshi.close = res.data.map(d => parseFloat(d[4]));
+//   inputHeikinAshi.volume = res.data.map(d => d[6]);
 
-  inputRSI.values = res.data.map(d => parseFloat(d[4]));
+//   inputRSI.values = res.data.map(d => parseFloat(d[4]));
 
-  inputAtr.high = res.data.map(d => parseFloat(d[2]));
-  inputAtr.low = res.data.map(d => parseFloat(d[3]));
-  inputAtr.close = res.data.map(d => parseFloat(d[4]));
+//   inputAtr.high = res.data.map(d => parseFloat(d[2]));
+//   inputAtr.low = res.data.map(d => parseFloat(d[3]));
+//   inputAtr.close = res.data.map(d => parseFloat(d[4]));
 
-  heikinAshiCandle = new ta.HeikinAshi(inputHeikinAshi);
-});
+//   heikinAshiCandle = new ta.HeikinAshi(inputHeikinAshi);
+// });
 
 const heikinAshiRsiStrategy = (open, high, low, close) => {
+  heikinAshiCandle = new ta.HeikinAshi(inputHeikinAshi);
   heikinAshiResults.push(heikinAshiCandle.nextValue({
     open: open,
     high: high,
@@ -86,10 +87,10 @@ const heikinAshiRsiStrategy = (open, high, low, close) => {
         const lowestLow = Math.min(...heikinAshiResults.map(result => result.low).slice(heikinAshiResults.length - 6));
         // buy binance order logic here
         console.log('Long');
-        console.log('limit price: ', close + (latestAtr * 1.5));
-        console.log('stop price: ', close - (latestAtr * 2));
-        console.log('stop limit price: ', close - (latestAtr * 2) - 0.02);
-        console.log('atr', latestAtr);
+        console.log('limit price: ', close + ((latestAtr * 0.01) * 1.5));
+        console.log('stop price: ', close - ((latestAtr * 0.01) * 2));
+        console.log('stop limit price: ', close - ((latestAtr * 0.01) * 2) - 0.02);
+        console.log('atr', latestAtr * 0.01);
         // api.limitOrder('BTCUSDT', 'BUY', 0.2, close);
         // api.ocoOrder('BTCUSDT', 'SELL', 0.2, close + ((close - lowestLow) * 2), lowestLow - 0.02, lowestLow - 0.03);
         inLongPosition = true;
@@ -102,10 +103,10 @@ const heikinAshiRsiStrategy = (open, high, low, close) => {
         const highestHigh = Math.max(...heikinAshiResults.map(result => result.high).slice(heikinAshiResults.length - 6));
         // sell binance order logic here
         console.log('Short');
-        console.log('limit price: ', close - (latestAtr * 1.5));
-        console.log('stop price: ', close + (latestAtr * 2));
-        console.log('stop limit price: ', close + (latestAtr * 2) + 0.02);
-        console.log('atr', latestAtr);
+        console.log('limit price: ', close - ((latestAtr * 0.01) * 1.5));
+        console.log('stop price: ', close + ((latestAtr * 0.01) * 2));
+        console.log('stop limit price: ', close + ((latestAtr * 0.01) * 2) + 0.02);
+        console.log('atr', latestAtr * 0.01);
         // api.limitOrder('BTCUSDT', 'SELL', 0.2, close);
         // api.ocoOrder('BTCUSDT', 'BUY', 0.2, close - ((highestHigh - close) * 2), highestHigh + 0.02, highestHigh + 0.03);
         inShortPosition = true;

@@ -73,10 +73,10 @@ const moneyFlowMacdAtrStrategy = (high, low, close, volume) => {
       if (!inLongPosition) {
         // buy binance order logic here
         console.log('Long');
-        console.log('limit price: ', close + (latestAtr * 1.5));
-        console.log('stop price: ', close - (latestAtr * 2));
-        console.log('stop limit price: ', close - (latestAtr * 2) - 0.02);
-        console.log('atr', latestAtr);
+        console.log('limit price: ', close + ((latestAtr * 0.01) * 1.5));
+        console.log('stop price: ', close - ((latestAtr * 0.01) * 2));
+        console.log('stop limit price: ', close - ((latestAtr * 0.01) * 2) - 0.02);
+        console.log('atr', latestAtr * 0.01);
         // api.limitOrder('BTCUSDT', 'BUY', 0.2, close);
         // api.ocoOrder('BTCUSDT', 'SELL', 0.2, close + ((close - lowestLow) * 2), lowestLow - 0.02, lowestLow - 0.03);
         inLongPosition = true;
@@ -88,10 +88,10 @@ const moneyFlowMacdAtrStrategy = (high, low, close, volume) => {
       if (!inShortPosition) {
         // sell binance order logic here
         console.log('Short');
-        console.log('limit price: ', close - (latestAtr * 1.5));
-        console.log('stop price: ', close + (latestAtr * 2));
-        console.log('stop limit price: ', close + (latestAtr * 2) + 0.02);
-        console.log('atr', latestAtr);
+        console.log('limit price: ', close - ((latestAtr * 0.01) * 1.5));
+        console.log('stop price: ', close + ((latestAtr * 0.01) * 2));
+        console.log('stop limit price: ', close + ((latestAtr * 0.01) * 2) + 0.02);
+        console.log('atr', latestAtr * 0.01);
         // api.limitOrder('BTCUSDT', 'SELL', 0.2, close);
         // api.ocoOrder('BTCUSDT', 'BUY', 0.2, close - ((highestHigh - close) * 2), highestHigh + 0.02, highestHigh + 0.03);
         inShortPosition = true;
