@@ -20,7 +20,7 @@ const calculateIchimoku = (high, low, close) => {
   ichimokuInput.low.push(parseFloat(low));
 
   if (ichimokuInput.low.length > ichimokuInput.spanPeriod) {
-    const ichimoku = ta.IchimokuCloud.calculate(ichimokuInput);
+    const ichimoku = new ta.IchimokuCloud.calculate(ichimokuInput);
     const latestIchimoku = ichimoku[ichimoku.length - 1];
 
     if (latestIchimoku.spanA > latestIchimoku.spanB) {
