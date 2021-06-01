@@ -22,7 +22,7 @@ const inputMacd = {
   signalPeriod: 9,
   SimpleMAOscillator: false,
   SimpleMASignal: false
-}
+};
 
 let lows = [];
 let highs = [];

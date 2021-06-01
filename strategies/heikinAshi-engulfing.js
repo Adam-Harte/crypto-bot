@@ -24,21 +24,22 @@ const inputAtr = {
 const heikinAshiResults = [];
 let heikinAshiCandle;
 
-api.getCandleSticks('BTCUSDT', '15m', 20).then(res => {
-  inputHeikinAshi.open = res.data.map(d => parseFloat(d[1]));
-  inputHeikinAshi.high = res.data.map(d => parseFloat(d[2]));
-  inputHeikinAshi.low = res.data.map(d => parseFloat(d[3]));
-  inputHeikinAshi.close = res.data.map(d => parseFloat(d[4]));
-  inputHeikinAshi.volume = res.data.map(d => d[6]);
+// api.getCandleSticks('BTCUSDT', '15m', 20).then(res => {
+//   inputHeikinAshi.open = res.data.map(d => parseFloat(d[1]));
+//   inputHeikinAshi.high = res.data.map(d => parseFloat(d[2]));
+//   inputHeikinAshi.low = res.data.map(d => parseFloat(d[3]));
+//   inputHeikinAshi.close = res.data.map(d => parseFloat(d[4]));
+//   inputHeikinAshi.volume = res.data.map(d => d[6]);
 
-  inputAtr.high = res.data.map(d => parseFloat(d[2]));
-  inputAtr.low = res.data.map(d => parseFloat(d[3]));
-  inputAtr.close = res.data.map(d => parseFloat(d[4]));
+//   inputAtr.high = res.data.map(d => parseFloat(d[2]));
+//   inputAtr.low = res.data.map(d => parseFloat(d[3]));
+//   inputAtr.close = res.data.map(d => parseFloat(d[4]));
 
-  heikinAshiCandle = new ta.HeikinAshi(inputHeikinAshi);
-});
+//   heikinAshiCandle = new ta.HeikinAshi(inputHeikinAshi);
+// });
 
 const heikinAshiEngulfingStrategy = (open, high, low, close) => {
+  heikinAshiCandle = new ta.HeikinAshi(inputHeikinAshi);
   heikinAshiResults.push(heikinAshiCandle.nextValue({
     open: open,
     high: high,
@@ -49,7 +50,7 @@ const heikinAshiEngulfingStrategy = (open, high, low, close) => {
   inputAtr.low.push(low);
   inputAtr.close.push(close);
 
-  if (heikinAshiResults.length > inputRSI.period) {
+  if (heikinAshiResults.length > inputAtr.period) {
     const atr = ta.ATR.calculate(inputAtr);
     const previousHeikinAshi = heikinAshiResults[heikinAshiResults.length - 2];
     const latestHeikinAshi = heikinAshiResults[heikinAshiResults.length - 1];

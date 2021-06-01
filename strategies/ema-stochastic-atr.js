@@ -8,17 +8,17 @@ let inShortPosition = false;
 const inputEma8 = {
   period: 8,
   values: []
-}
+};
 
 const inputEma14 = {
   period: 14,
   values: []
-}
+};
 
 const inputEma50 = {
   period: 50,
   values: []
-}
+};
 
 const inputStochastic = {
   values: [],
@@ -26,7 +26,7 @@ const inputStochastic = {
   stochasticPeriod: 14,
   kPeriod: 3,
   dPeriod: 3
-}
+};
 
 const inputAtr = {
   high: [],
