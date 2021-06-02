@@ -1,5 +1,6 @@
 const ta = require('technicalindicators');
 
+const utils = require('./utils');
 const api = require('../testApi');
 
 let inLongPosition = false;
@@ -67,45 +68,34 @@ const moneyFlowStochasticEmaStrategy = (high, low, close, volume) => {
     const previousStochastic = stochastic[stochastic.length - 2];
     const latestStochastic = stochastic[stochastic.length - 1];
 
-    const sortedLows = lows.slice(lows.length - 15).sort((a, b) => a - b);
-    const lowestIndex = lows.findIndex(l => l === sortedLows[0]);
-    const nextLowestIndex = lows.findIndex(l => l === sortedLows[1]);
-
-    const sortedHighs = highs.slice(highs.length - 15).sort((a, b) => b - a);
-    const highestIndex = highs.findIndex(h => h === sortedHighs[0]);
-    const nextHighestIndex = highs.findIndex(h => h === sortedHighs[1]);
-
-    const hiddenBullishDivergence = lowestIndex < nextLowestIndex && moneyFlow[lowestIndex] > moneyFlow[nextLowestIndex];
-    const hiddenBearishDivergence = highestIndex < nextHighestIndex && moneyFlow[highestIndex] > moneyFlow[nextHighestIndex];
-
     const stochasticCrossUp = previousStochastic.k < previousStochastic.d && latestStochastic.k > latestStochastic.d;
     const stochasticCrossDown = previousStochastic.k > previousStochastic.d && latestStochastic.k < latestStochastic.d;
     const aboveEma = close > latestEma200;
     const belowEma = close < latestEma200;
 
-    if (aboveEma && hiddenBullishDivergence && stochasticCrossUp) {
+    if (aboveEma && utils.getHiddenBullishDivergence(lows, moneyFlow) && stochasticCrossUp) {
       if (!inLongPosition) {
         // buy binance order logic here
         console.log('Long');
-        console.log('limit price: ', close + ((close - sortedLows[0]) * 2));
-        console.log('stop price: ', sortedLows[0] - 0.02);
-        console.log('stop limit price: ', sortedLows[0] - 0.03);
+        console.log('limit price: ', close + ((close - utils.getSwingLow(lows)) * 2));
+        console.log('stop price: ', utils.getSwingLow(lows) - 0.02);
+        console.log('stop limit price: ', utils.getSwingLow(lows) - 0.03);
         // api.limitOrder('BTCUSDT', 'BUY', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'SELL', 0.2, close + ((close - lowestLow) * 2), lowestLow - 0.02, lowestLow - 0.03);
+        // api.ocoOrder('BTCUSDT', 'SELL', 0.2, close + ((close - utils.getSwingLow(lows)) * 2), utils.getSwingLow(lows) - 0.02, utils.getSwingLow(lows) - 0.03);
         inLongPosition = true;
         inShortPosition = false;
       }
     }
 
-    if (belowEma && hiddenBearishDivergence && stochasticCrossDown) {
+    if (belowEma && utils.getHiddenBearishDivergence(highs, moneyFlow) && stochasticCrossDown) {
       if (!inShortPosition) {
         // sell binance order logic here
         console.log('Short');
-        console.log('limit price: ', close - ((sortedHighs[0] - close) * 2));
-        console.log('stop price: ', sortedHighs[0] + 0.02);
-        console.log('stop limit price: ', sortedHighs[0] + 0.03);
+        console.log('limit price: ', close - ((utils.getSwingHigh(highs) - close) * 2));
+        console.log('stop price: ', utils.getSwingHigh(highs) + 0.02);
+        console.log('stop limit price: ', utils.getSwingHigh(highs) + 0.03);
         // api.limitOrder('BTCUSDT', 'SELL', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'BUY', 0.2, close - ((highestHigh - close) * 2), highestHigh + 0.02, highestHigh + 0.03);
+        // api.ocoOrder('BTCUSDT', 'BUY', 0.2, close - ((utils.getSwingHigh(highs) - close) * 2), utils.getSwingHigh(highs) + 0.02, utils.getSwingHigh(highs) + 0.03);
         inShortPosition = true;
         inLongPosition = false;
       }
