@@ -58,11 +58,11 @@ const emaStochasticAtrStrategy = (high, low, close) => {
   inputAtr.close.push(close);
 
   if (inputEma50.values.length > inputEma50.period) {
-    const ema8 = ta.EMA.calculate(inputEma8);
-    const ema14 = ta.EMA.calculate(inputEma14);
-    const ema50 = ta.EMA.calculate(inputEma50);
-    const stochastic = ta.StochasticRSI.calculate(inputStochastic);
-    const atr = ta.ATR.calculate(inputAtr);
+    const ema8 = new ta.EMA.calculate(inputEma8);
+    const ema14 = new ta.EMA.calculate(inputEma14);
+    const ema50 = new ta.EMA.calculate(inputEma50);
+    const stochastic = new ta.StochasticRSI.calculate(inputStochastic);
+    const atr = new ta.ATR.calculate(inputAtr);
 
     const latestEma8 = ema8[ema8.length - 1];
     const latestEma14 = ema14[ema14.length - 1];

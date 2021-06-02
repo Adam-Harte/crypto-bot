@@ -37,7 +37,7 @@ const heikinAshiIchimokuStrategy = (open, high, low, close) => {
   ichimokuInput.low.push(low);
 
   if (heikinAshiResults.length > 52) {
-    const ichimoku = ta.IchimokuCloud.calculate(ichimokuInput);
+    const ichimoku = new ta.IchimokuCloud.calculate(ichimokuInput);
 
     const oldHeikinAshi = heikinAshiResults[heikinAshiResults.length - 3];
     const previousHeikinAshi = heikinAshiResults[heikinAshiResults.length - 2];

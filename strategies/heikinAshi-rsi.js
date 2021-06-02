@@ -59,8 +59,8 @@ const heikinAshiRsiStrategy = (open, high, low, close) => {
   inputAtr.close.push(close);
 
   if (heikinAshiResults.length > inputRSI.period) {
-    const rsi = ta.RSI.calculate(inputRSI);
-    const atr = ta.ATR.calculate(inputAtr);
+    const rsi = new ta.RSI.calculate(inputRSI);
+    const atr = new ta.ATR.calculate(inputAtr);
     const oldHeikinAshi = heikinAshiResults[heikinAshiResults.length - 3];
     const previousHeikinAshi = heikinAshiResults[heikinAshiResults.length - 2];
     const latestHeikinAshi = heikinAshiResults[heikinAshiResults.length - 1];
