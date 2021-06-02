@@ -64,12 +64,12 @@ const heikinAshiEngulfingStrategy = (open, high, low, close) => {
       if (!inLongPosition) {
         // buy binance order logic here
         console.log('Long');
-        console.log('limit price: ', close + (utils.getAtrTicks(latestAtr, 0.01)) * 1.5);
-        console.log('stop price: ', close - (utils.getAtrTicks(latestAtr, 0.01)) * 2);
-        console.log('stop limit price: ', close - (utils.getAtrTicks(latestAtr, 0.01) * 2) - 0.02);
-        console.log('atr', latestAtr * 0.01);
+        console.log('limit price: ', utils.format(close + (utils.getAtrTicks(latestAtr, 0.01)) * 1.5));
+        console.log('stop price: ', utils.format(close - (utils.getAtrTicks(latestAtr, 0.01)) * 2));
+        console.log('stop limit price: ', utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2) - 0.02));
+        console.log('atr', utils.getAtrTicks(latestAtr, 0.01));
         // api.limitOrder('BTCUSDT', 'BUY', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'SELL', 0.2, close + (utils.getAtrTicks(latestAtr, 0.01) * 1.5), close - (utils.getAtrTicks(latestAtr, 0.01) * 2), close - (utils.getAtrTicks(latestAtr, 0.01) * 2) - 0.02);
+        // api.ocoOrder('BTCUSDT', 'SELL', 0.2, utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 1.5)), utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2)), utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2) - 0.02));
         inLongPosition = true;
         inShortPosition = false;
       }
@@ -85,12 +85,12 @@ const heikinAshiEngulfingStrategy = (open, high, low, close) => {
       if (!inShortPosition) {
         // sell binance order logic here
         console.log('Short');
-        console.log('limit price: ', close - (utils.getAtrTicks(latestAtr, 0.01) * 1.5));
-        console.log('stop price: ', close + (utils.getAtrTicks(latestAtr, 0.01) * 2));
-        console.log('stop limit price: ', close + (utils.getAtrTicks(latestAtr, 0.01) * 2) + 0.02);
-        console.log('atr', latestAtr * 0.01);
+        console.log('limit price: ', utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 1.5)));
+        console.log('stop price: ', utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2)));
+        console.log('stop limit price: ', utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2) + 0.02));
+        console.log('atr', utils.getAtrTicks(latestAtr, 0.01));
         // api.limitOrder('BTCUSDT', 'SELL', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'BUY', 0.2, close - (utils.getAtrTicks(latestAtr, 0.01) * 1.5), close + (utils.getAtrTicks(latestAtr, 0.01) * 2), close + (utils.getAtrTicks(latestAtr, 0.01) * 2) + 0.02);
+        // api.ocoOrder('BTCUSDT', 'BUY', 0.2, utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 1.5)), utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2)), utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2) + 0.02));
         inShortPosition = true;
         inLongPosition = false;
       }

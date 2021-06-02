@@ -1,5 +1,6 @@
 const ta = require('technicalindicators');
 
+const utils = require('./utils');
 const api = require('../testApi');
 
 let inLongPosition = false;
@@ -54,11 +55,11 @@ const rsiStochasticEmaStrategy = (open, close) => {
       if (!inLongPosition) {
         // buy binance order logic here
         console.log('Long');
-        console.log('limit price: ', close + ((close - low) * 2));
-        console.log('stop price: ', low - 0.02);
-        console.log('stop limit price: ', low - 0.03);
+        console.log('limit price: ', utils.format(close + ((close - low) * 2)));
+        console.log('stop price: ', utils.format(low - 0.02));
+        console.log('stop limit price: ', utils.format(low - 0.03));
         // api.limitOrder('BTCUSDT', 'BUY', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'SELL', 0.2, close + ((close - lowestLow) * 2), lowestLow - 0.02, lowestLow - 0.03);
+        // api.ocoOrder('BTCUSDT', 'SELL', 0.2, utils.format(close + ((close - lowestLow) * 2)), utils.format(lowestLow - 0.02), utils.format(lowestLow - 0.03));
         inLongPosition = true;
         inShortPosition = false;
       }
@@ -68,11 +69,11 @@ const rsiStochasticEmaStrategy = (open, close) => {
       if (!inShortPosition) {
         // sell binance order logic here
         console.log('Short');
-        console.log('limit price: ', close - ((high - close) * 2));
-        console.log('stop price: ', high + 0.02);
-        console.log('stop limit price: ', high + 0.03);
+        console.log('limit price: ', utils.format(close - ((high - close) * 2)));
+        console.log('stop price: ', utils.format(high + 0.02));
+        console.log('stop limit price: ', utils.format(high + 0.03));
         // api.limitOrder('BTCUSDT', 'SELL', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'BUY', 0.2, close - ((highestHigh - close) * 2), highestHigh + 0.02, highestHigh + 0.03);
+        // api.ocoOrder('BTCUSDT', 'BUY', 0.2, utils.format(close - ((highestHigh - close) * 2)), utils.format(highestHigh + 0.02), utils.format(highestHigh + 0.03));
         inShortPosition = true;
         inLongPosition = false;
       }

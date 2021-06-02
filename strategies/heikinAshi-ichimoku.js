@@ -1,5 +1,6 @@
 const ta = require('technicalindicators');
 
+const utils = require('./utils');
 const api = require('../testApi');
 
 let inLongPosition = false;
@@ -62,12 +63,12 @@ const heikinAshiIchimokuStrategy = (open, high, low, close) => {
     if (buySignal) {
       if (!inLongPosition) {
         console.log('Long');
-        console.log('limit price: ', close * 1.02);
-        console.log('stop price: ', close * 0.99);
-        console.log('stop limit price: ', close * 0.98);
+        console.log('limit price: ', utils.format(close * 1.02));
+        console.log('stop price: ', utils.format(close * 0.99));
+        console.log('stop limit price: ', utils.format(close * 0.98));
         // buy binance order logic here
         // api.limitOrder('BTCUSDT', 'BUY', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'SELL', 0.2, close * 1.02, close * 0.99, close * 0.98);
+        // api.ocoOrder('BTCUSDT', 'SELL', 0.2, utils.format(close * 1.02), utils.format(close * 0.99), utils.format(close * 0.98));
         inLongPosition = true;
         inShortPosition = false;
       }
@@ -76,12 +77,12 @@ const heikinAshiIchimokuStrategy = (open, high, low, close) => {
     if (sellSignal) {
       if (!inShortPosition) {
         console.log('Short');
-        console.log('limit price: ', close * 0.98);
-        console.log('stop price: ', close * 1.01);
-        console.log('stop limit price: ', close * 1.02);
+        console.log('limit price: ', utils.format(close * 0.98));
+        console.log('stop price: ', utils.format(close * 1.01));
+        console.log('stop limit price: ', utils.format(close * 1.02));
         // sell binance order logic here
         // api.limitOrder('BTCUSDT', 'SELL', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'BUY', 0.2, close * 0.98, close * 1.01, close * 1.02);
+        // api.ocoOrder('BTCUSDT', 'BUY', 0.2, utils.format(close * 0.98), utils.format(close * 1.01), utils.format(close * 1.02));
         inShortPosition = true;
         inLongPosition = false;
       }

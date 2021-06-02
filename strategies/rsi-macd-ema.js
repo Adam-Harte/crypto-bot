@@ -55,9 +55,6 @@ const rsiMacdEmaStrategy = (high, low, close) => {
     const previousMacd = macd[macd.length - 2];
     const latestMacd = macd[macd.length - 1];
 
-    const sortedLows = lows.slice(lows.length - 15).sort((a, b) => a - b);
-    const sortedHighs = highs.slice(highs.length - 15).sort((a, b) => b - a);
-
     const macdCrossUp = previousMacd.MACD < previousMacd.signal && latestMacd.MACD > latestMacd.signal;
     const macdCrossDown = previousMacd.MACD > previousMacd.signal && latestMacd.MACD < latestMacd.signal;
     const aboveEma = close > latestEma200;
@@ -67,11 +64,11 @@ const rsiMacdEmaStrategy = (high, low, close) => {
       if (!inLongPosition) {
         // buy binance order logic here
         console.log('Long');
-        console.log('limit price: ', close + ((close - utils.getSwingLow(lows)) * 2));
-        console.log('stop price: ', utils.getSwingLow(lows) - 0.02);
-        console.log('stop limit price: ', utils.getSwingLow(lows) - 0.03);
+        console.log('limit price: ', utils.format(close + ((close - utils.getSwingLow(lows)) * 2)));
+        console.log('stop price: ', utils.format(utils.getSwingLow(lows) - 0.02));
+        console.log('stop limit price: ', utils.format(utils.getSwingLow(lows) - 0.03));
         // api.limitOrder('BTCUSDT', 'BUY', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'SELL', 0.2, close + ((close - utils.getSwingLow(lows)) * 2), utils.getSwingLow(lows) - 0.02, utils.getSwingLow(lows) - 0.03);
+        // api.ocoOrder('BTCUSDT', 'SELL', 0.2, utils.format(close + ((close - utils.getSwingLow(lows)) * 2)), utils.format(utils.getSwingLow(lows) - 0.02), utils.format(utils.getSwingLow(lows) - 0.03));
         inLongPosition = true;
         inShortPosition = false;
       }
@@ -81,11 +78,11 @@ const rsiMacdEmaStrategy = (high, low, close) => {
       if (!inShortPosition) {
         // sell binance order logic here
         console.log('Short');
-        console.log('limit price: ', close - ((utils.getSwingHigh(highs) - close) * 2));
-        console.log('stop price: ', utils.getSwingHigh(highs) + 0.02);
-        console.log('stop limit price: ', utils.getSwingHigh(highs) + 0.03);
+        console.log('limit price: ', utils.format(close - ((utils.getSwingHigh(highs) - close) * 2)));
+        console.log('stop price: ', utils.format(utils.getSwingHigh(highs) + 0.02));
+        console.log('stop limit price: ', utils.format(utils.getSwingHigh(highs) + 0.03));
         // api.limitOrder('BTCUSDT', 'SELL', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'BUY', 0.2, close - ((utils.getSwingHigh(highs) - close) * 2), utils.getSwingHigh(highs) + 0.02, utils.getSwingHigh(highs) + 0.03);
+        // api.ocoOrder('BTCUSDT', 'BUY', 0.2, utils.format(close - ((utils.getSwingHigh(highs) - close) * 2)), utils.format(utils.getSwingHigh(highs) + 0.02), utils.format(utils.getSwingHigh(highs) + 0.03));
         inShortPosition = true;
         inLongPosition = false;
       }
