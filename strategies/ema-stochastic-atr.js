@@ -1,7 +1,9 @@
 const ta = require('technicalindicators');
 
 const utils = require('./utils');
-const api = require('../testApi');
+const candleSticks = require('../api/candleSticks');
+const limitOrder = require('../api/limitOrder');
+const ocoOrder = require('../api/ocoOrder');
 
 let inLongPosition = false;
 let inShortPosition = false;
@@ -37,17 +39,17 @@ const inputAtr = {
   format: v => parseFloat(v.toPrecision(8))
 };
 
-// api.getCandleSticks('BTCUSDT', '1h', 50).then(res => {
-//   inputEma8.values = res.data.map(d => parseFloat(d[4]));
-//   inputEma14.values = res.data.map(d => parseFloat(d[4]));
-//   inputEma50.values = res.data.map(d => parseFloat(d[4]));
+candleSticks('BTCUSDT', '1h', 50).then(res => {
+  inputEma8.values = res.data.map(d => parseFloat(d[4]));
+  inputEma14.values = res.data.map(d => parseFloat(d[4]));
+  inputEma50.values = res.data.map(d => parseFloat(d[4]));
 
-//   inputStochastic.values = res.data.map(d => parseFloat(d[4]));
+  inputStochastic.values = res.data.map(d => parseFloat(d[4]));
 
-//   inputAtr.high = res.data.map(d => parseFloat(d[2]));
-//   inputAtr.low = res.data.map(d => parseFloat(d[3]));
-//   inputAtr.close = res.data.map(d => parseFloat(d[4]));
-// });
+  inputAtr.high = res.data.map(d => parseFloat(d[2]));
+  inputAtr.low = res.data.map(d => parseFloat(d[3]));
+  inputAtr.close = res.data.map(d => parseFloat(d[4]));
+});
 
 const emaStochasticAtrStrategy = (high, low, close) => {
   inputEma8.values.push(close);
@@ -85,8 +87,8 @@ const emaStochasticAtrStrategy = (high, low, close) => {
         console.log('stop price: ', utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 3)));
         console.log('stop limit price: ', utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 3) - 0.02));
         console.log('atr', utils.getAtrTicks(latestAtr, 0.01));
-        // api.limitOrder('BTCUSDT', 'BUY', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'SELL', 0.2, utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2)), utils.format(close - (utils.getAtrTicks(latestAtr, 0.01)) * 3), utils.format(close - (utils.getAtrTicks(latestAtr, 0.01)) * 3 - 0.02));
+        limitOrder('BTCUSDT', 'BUY', 0.2, close);
+        ocoOrder('BTCUSDT', 'SELL', 0.2, utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2)), utils.format(close - (utils.getAtrTicks(latestAtr, 0.01)) * 3), utils.format(close - (utils.getAtrTicks(latestAtr, 0.01)) * 3 - 0.02));
         inLongPosition = true;
         inShortPosition = false;
       }
@@ -100,8 +102,8 @@ const emaStochasticAtrStrategy = (high, low, close) => {
         console.log('stop price: ', utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 3)));
         console.log('stop limit price: ', utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 3) + 0.02));
         console.log('atr', utils.getAtrTicks(latestAtr, 0.01));
-        // api.limitOrder('BTCUSDT', 'SELL', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'BUY', 0.2, utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2)), utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 3)), utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 3) + 0.03));
+        limitOrder('BTCUSDT', 'SELL', 0.2, close);
+        ocoOrder('BTCUSDT', 'BUY', 0.2, utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2)), utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 3)), utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 3) + 0.03));
         inShortPosition = true;
         inLongPosition = false;
       }

@@ -1,7 +1,9 @@
 const ta = require('technicalindicators');
 
 const utils = require('./utils');
-const api = require('../testApi');
+const candleSticks = require('../api/candleSticks');
+const limitOrder = require('../api/limitOrder');
+const ocoOrder = require('../api/ocoOrder');
 
 let inLongPosition = false;
 let inShortPosition = false;
@@ -30,21 +32,19 @@ const inputAtr = {
 const heikinAshiResults = [];
 let heikinAshiCandle;
 
-// api.getCandleSticks('BTCUSDT', '15m', 20).then(res => {
-//   inputHeikinAshi.open = res.data.map(d => parseFloat(d[1]));
-//   inputHeikinAshi.high = res.data.map(d => parseFloat(d[2]));
-//   inputHeikinAshi.low = res.data.map(d => parseFloat(d[3]));
-//   inputHeikinAshi.close = res.data.map(d => parseFloat(d[4]));
-//   inputHeikinAshi.volume = res.data.map(d => d[6]);
+candleSticks('BTCUSDT', '15m', 20).then(res => {
+  inputHeikinAshi.open = res.data.map(d => parseFloat(d[1]));
+  inputHeikinAshi.high = res.data.map(d => parseFloat(d[2]));
+  inputHeikinAshi.low = res.data.map(d => parseFloat(d[3]));
+  inputHeikinAshi.close = res.data.map(d => parseFloat(d[4]));
+  inputHeikinAshi.volume = res.data.map(d => d[6]);
 
-//   inputRSI.values = res.data.map(d => parseFloat(d[4]));
+  inputRSI.values = res.data.map(d => parseFloat(d[4]));
 
-//   inputAtr.high = res.data.map(d => parseFloat(d[2]));
-//   inputAtr.low = res.data.map(d => parseFloat(d[3]));
-//   inputAtr.close = res.data.map(d => parseFloat(d[4]));
-
-//   heikinAshiCandle = new ta.HeikinAshi(inputHeikinAshi);
-// });
+  inputAtr.high = res.data.map(d => parseFloat(d[2]));
+  inputAtr.low = res.data.map(d => parseFloat(d[3]));
+  inputAtr.close = res.data.map(d => parseFloat(d[4]));
+});
 
 const heikinAshiRsiStrategy = (open, high, low, close) => {
   heikinAshiCandle = new ta.HeikinAshi(inputHeikinAshi);
@@ -91,8 +91,8 @@ const heikinAshiRsiStrategy = (open, high, low, close) => {
         console.log('stop price: ', utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2)));
         console.log('stop limit price: ', utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2) - 0.02));
         console.log('atr', utils.getAtrTicks(latestAtr, 0.01));
-        // api.limitOrder('BTCUSDT', 'BUY', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'SELL', 0.2, utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 1.5)), utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2)), utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2) - 0.02));
+        limitOrder('BTCUSDT', 'BUY', 0.2, close);
+        ocoOrder('BTCUSDT', 'SELL', 0.2, utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 1.5)), utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2)), utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2) - 0.02));
         inLongPosition = true;
         inShortPosition = false;
       }
@@ -106,8 +106,8 @@ const heikinAshiRsiStrategy = (open, high, low, close) => {
         console.log('stop price: ', utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2)));
         console.log('stop limit price: ', utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2) + 0.02));
         console.log('atr', utils.getAtrTicks(utils.getAtrTicks(latestAtr, 0.01)));
-        // api.limitOrder('BTCUSDT', 'SELL', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'BUY', 0.2, utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 1.5)), utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2)), utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2) + 0.02));
+        limitOrder('BTCUSDT', 'SELL', 0.2, close);
+        ocoOrder('BTCUSDT', 'BUY', 0.2, utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 1.5)), utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2)), utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2) + 0.02));
         inShortPosition = true;
         inLongPosition = false;
       }

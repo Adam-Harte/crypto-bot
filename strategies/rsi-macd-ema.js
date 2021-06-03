@@ -1,7 +1,9 @@
 const ta = require('technicalindicators');
 
 const utils = require('./utils');
-const api = require('../testApi');
+const candleSticks = require('../api/candleSticks');
+const limitOrder = require('../api/limitOrder');
+const ocoOrder = require('../api/ocoOrder');
 
 let inLongPosition = false;
 let inShortPosition = false;
@@ -28,16 +30,16 @@ const inputMacd = {
 let lows = [];
 let highs = [];
 
-// api.getCandleSticks('BTCUSDT', '1h', 50).then(res => {
-//   inputEma200.values = res.data.map(d => parseFloat(d[4]));
+candleSticks('BTCUSDT', '1h', 50).then(res => {
+  inputEma200.values = res.data.map(d => parseFloat(d[4]));
 
-//   inputMacd.values = res.data.map(d => parseFloat(d[4]));
+  inputMacd.values = res.data.map(d => parseFloat(d[4]));
 
-//   inputRsi.values = res.data.map(d => parseFloat(d[4]));
+  inputRsi.values = res.data.map(d => parseFloat(d[4]));
 
-//   lows = res.data.map(d => parseFloat(d[3]));
-//   highs = res.data.map(d => parseFloat(d[2]));
-// });
+  lows = res.data.map(d => parseFloat(d[3]));
+  highs = res.data.map(d => parseFloat(d[2]));
+});
 
 const rsiMacdEmaStrategy = (high, low, close) => {
   inputEma200.values.push(close);
@@ -67,8 +69,8 @@ const rsiMacdEmaStrategy = (high, low, close) => {
         console.log('limit price: ', utils.format(close + ((close - utils.getSwingLow(lows)) * 2)));
         console.log('stop price: ', utils.format(utils.getSwingLow(lows) - 0.02));
         console.log('stop limit price: ', utils.format(utils.getSwingLow(lows) - 0.03));
-        // api.limitOrder('BTCUSDT', 'BUY', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'SELL', 0.2, utils.format(close + ((close - utils.getSwingLow(lows)) * 2)), utils.format(utils.getSwingLow(lows) - 0.02), utils.format(utils.getSwingLow(lows) - 0.03));
+        limitOrder('BTCUSDT', 'BUY', 0.2, close);
+        ocoOrder('BTCUSDT', 'SELL', 0.2, utils.format(close + ((close - utils.getSwingLow(lows)) * 2)), utils.format(utils.getSwingLow(lows) - 0.02), utils.format(utils.getSwingLow(lows) - 0.03));
         inLongPosition = true;
         inShortPosition = false;
       }
@@ -81,8 +83,8 @@ const rsiMacdEmaStrategy = (high, low, close) => {
         console.log('limit price: ', utils.format(close - ((utils.getSwingHigh(highs) - close) * 2)));
         console.log('stop price: ', utils.format(utils.getSwingHigh(highs) + 0.02));
         console.log('stop limit price: ', utils.format(utils.getSwingHigh(highs) + 0.03));
-        // api.limitOrder('BTCUSDT', 'SELL', 0.2, close);
-        // api.ocoOrder('BTCUSDT', 'BUY', 0.2, utils.format(close - ((utils.getSwingHigh(highs) - close) * 2)), utils.format(utils.getSwingHigh(highs) + 0.02), utils.format(utils.getSwingHigh(highs) + 0.03));
+        limitOrder('BTCUSDT', 'SELL', 0.2, close);
+        ocoOrder('BTCUSDT', 'BUY', 0.2, utils.format(close - ((utils.getSwingHigh(highs) - close) * 2)), utils.format(utils.getSwingHigh(highs) + 0.02), utils.format(utils.getSwingHigh(highs) + 0.03));
         inShortPosition = true;
         inLongPosition = false;
       }
