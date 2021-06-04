@@ -6,6 +6,13 @@ module.exports.getSwingLow = (lows) => {
   return Math.min(...lows);
 };
 
+module.exports.getOrderQuantity = (balance, risk, coinPrice) => {
+  const riskAmount = balance * risk;
+  const quantityToOrder = coinPrice / riskAmount;
+
+  return parseFloat(quantityToOrder.toPrecision(10));
+};
+
 module.exports.getAtrTicks = (atr, tickSize) => {
   return atr * tickSize;
 };
