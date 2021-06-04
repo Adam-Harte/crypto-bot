@@ -5,20 +5,20 @@ const utils = require('./utils');
 
 const getOrderByIdRequest = async (params) => {
   try {
-    const data = await axios({
+    const res = await axios({
       method: "GET",
       url: 'https://testnet.binance.vision/api/v3/order',
       params: utils.signPayload(params),
       headers: { "X-MBX-APIKEY": process.env.BINANCE_TEST_API_KEY },
     });
-    console.log(data);
+    return res;
   } catch (error) {
     console.log(error.response?.data || error.message);
   }
 };
 
 const orderById = (symbol, orderId) => {
-  getOrderByIdRequest({
+  return getOrderByIdRequest({
     symbol,
     orderId
   });

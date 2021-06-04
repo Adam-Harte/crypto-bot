@@ -5,20 +5,20 @@ const utils = require('./utils');
 
 const getAccountRequest = async (params) => {
   try {
-    const data = await axios({
+    const res = await axios({
       method: "GET",
       url: 'https://testnet.binance.vision/api/v3/account',
       params: utils.signPayload(params),
       headers: { "X-MBX-APIKEY": process.env.BINANCE_TEST_API_KEY },
     });
-    console.log(data);
+    return res;
   } catch (error) {
     console.log(error.response?.data || error.message);
   }
 };
 
 const account = () => {
-  getAccountRequest({});
+  return getAccountRequest({});
 };
 
 module.exports = account;

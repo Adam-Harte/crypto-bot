@@ -3,7 +3,7 @@ require("dotenv").config();
 
 const getExchangeInfoRequest = async (params) => {
   try {
-    const result = await axios({
+    const res = await axios({
       method: "GET",
       url: 'https://testnet.binance.vision/api/v3/exchangeInfo',
       params: {
@@ -11,15 +11,14 @@ const getExchangeInfoRequest = async (params) => {
       },
       headers: { "X-MBX-APIKEY": process.env.BINANCE_TEST_API_KEY },
     });
-    console.log(result.data.symbols[0].filters);
-    return result;
+    return res;
   } catch (error) {
     console.log(error.response?.data || error.message);
   }
 };
 
 const exchangeInfo = (symbol) => {
-  getExchangeInfoRequest({
+  return getExchangeInfoRequest({
     symbol
   });
 };

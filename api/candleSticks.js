@@ -3,7 +3,7 @@ require("dotenv").config();
 
 const getCandleSticksRequest = async (params) => {
   try {
-    const result = await axios({
+    const res = await axios({
       method: "GET",
       url: 'https://testnet.binance.vision/api/v3/klines',
       params: {
@@ -11,7 +11,6 @@ const getCandleSticksRequest = async (params) => {
       },
       headers: { "X-MBX-APIKEY": process.env.BINANCE_TEST_API_KEY },
     });
-    console.log(JSON.stringify(result.data));
     return result;
   } catch (error) {
     console.log(error.response?.data || error.message);
