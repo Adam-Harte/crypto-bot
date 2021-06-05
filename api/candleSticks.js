@@ -11,7 +11,7 @@ const getCandleSticksRequest = async (params) => {
       },
       headers: { "X-MBX-APIKEY": process.env.BINANCE_TEST_API_KEY },
     });
-    return result;
+    return res;
   } catch (error) {
     console.log(error.response?.data || error.message);
   }
