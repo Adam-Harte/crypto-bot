@@ -15,10 +15,6 @@ module.exports.getOrderQuantity = (balance, risk, coinPrice) => {
   return parseFloat(quantityToOrder.toPrecision(10));
 };
 
-module.exports.getAtrTicks = (atr, tickSize) => {
-  return roundTo(atr * tickSize, 2);
-};
-
 module.exports.format = (value, decimals) => {
   return roundTo(value, decimals);
 };
