@@ -64,12 +64,12 @@ const heikinAshiIchimokuStrategy = (open, high, low, close) => {
     if (buySignal) {
       if (!inLongPosition) {
         console.log('Long');
-        console.log('limit price: ', utils.format(close * 1.02));
-        console.log('stop price: ', utils.format(close * 0.99));
-        console.log('stop limit price: ', utils.format(close * 0.98));
+        console.log('limit price: ', utils.format(close * 1.02, 2));
+        console.log('stop price: ', utils.format(close * 0.99, 2));
+        console.log('stop limit price: ', utils.format(close * 0.98, 2));
         // buy binance order logic here
-        limitOrder('BTCUSDT', 'BUY', 0.2, close);
-        ocoOrder('BTCUSDT', 'SELL', 0.2, utils.format(close * 1.02), utils.format(close * 0.99), utils.format(close * 0.98));
+        limitOrder('BTCUSDT', 'BUY', 0.001, close);
+        ocoOrder('BTCUSDT', 'SELL', 0.001, utils.format(close * 1.02, 2), utils.format(close * 0.99, 2), utils.format(close * 0.98, 2));
         inLongPosition = true;
         inShortPosition = false;
       }
@@ -78,12 +78,12 @@ const heikinAshiIchimokuStrategy = (open, high, low, close) => {
     if (sellSignal) {
       if (!inShortPosition) {
         console.log('Short');
-        console.log('limit price: ', utils.format(close * 0.98));
-        console.log('stop price: ', utils.format(close * 1.01));
-        console.log('stop limit price: ', utils.format(close * 1.02));
+        console.log('limit price: ', utils.format(close * 0.98, 2));
+        console.log('stop price: ', utils.format(close * 1.01, 2));
+        console.log('stop limit price: ', utils.format(close * 1.02, 2));
         // sell binance order logic here
-        limitOrder('BTCUSDT', 'SELL', 0.2, close);
-        ocoOrder('BTCUSDT', 'BUY', 0.2, utils.format(close * 0.98), utils.format(close * 1.01), utils.format(close * 1.02));
+        limitOrder('BTCUSDT', 'SELL', 0.001, close);
+        ocoOrder('BTCUSDT', 'BUY', 0.001, utils.format(close * 0.98, 2), utils.format(close * 1.01, 2), utils.format(close * 1.02, 2));
         inShortPosition = true;
         inLongPosition = false;
       }

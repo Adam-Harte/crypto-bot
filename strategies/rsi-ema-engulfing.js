@@ -57,11 +57,11 @@ const rsiStochasticEmaStrategy = (open, close) => {
       if (!inLongPosition) {
         // buy binance order logic here
         console.log('Long');
-        console.log('limit price: ', utils.format(close + ((close - low) * 2)));
-        console.log('stop price: ', utils.format(low - 0.02));
-        console.log('stop limit price: ', utils.format(low - 0.03));
-        limitOrder('BTCUSDT', 'BUY', 0.2, close);
-        ocoOrder('BTCUSDT', 'SELL', 0.2, utils.format(close + ((close - lowestLow) * 2)), utils.format(lowestLow - 0.02), utils.format(lowestLow - 0.03));
+        console.log('limit price: ', utils.format(close + ((close - low) * 2), 2));
+        console.log('stop price: ', utils.format(low - 0.02, 2));
+        console.log('stop limit price: ', utils.format(low - 0.03, 2));
+        limitOrder('BTCUSDT', 'BUY', 0.001, close);
+        ocoOrder('BTCUSDT', 'SELL', 0.001, utils.format(close + ((close - lowestLow) * 2), 2), utils.format(lowestLow - 0.02, 2), utils.format(lowestLow - 0.03, 2));
         inLongPosition = true;
         inShortPosition = false;
       }
@@ -71,11 +71,11 @@ const rsiStochasticEmaStrategy = (open, close) => {
       if (!inShortPosition) {
         // sell binance order logic here
         console.log('Short');
-        console.log('limit price: ', utils.format(close - ((high - close) * 2)));
-        console.log('stop price: ', utils.format(high + 0.02));
-        console.log('stop limit price: ', utils.format(high + 0.03));
-        limitOrder('BTCUSDT', 'SELL', 0.2, close);
-        ocoOrder('BTCUSDT', 'BUY', 0.2, utils.format(close - ((highestHigh - close) * 2)), utils.format(highestHigh + 0.02), utils.format(highestHigh + 0.03));
+        console.log('limit price: ', utils.format(close - ((high - close) * 2), 2));
+        console.log('stop price: ', utils.format(high + 0.02, 2));
+        console.log('stop limit price: ', utils.format(high + 0.03, 2));
+        limitOrder('BTCUSDT', 'SELL', 0.001, close);
+        ocoOrder('BTCUSDT', 'BUY', 0.001, utils.format(close - ((highestHigh - close) * 2), 2), utils.format(highestHigh + 0.02, 2), utils.format(highestHigh + 0.03, 2));
         inShortPosition = true;
         inLongPosition = false;
       }

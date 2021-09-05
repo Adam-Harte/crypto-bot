@@ -78,8 +78,8 @@ const heikinAshiRsiStrategy = (open, high, low, close) => {
     const previousCandleStrongGreen = previousHeikinAshi.close > previousHeikinAshi.open && previousHeikinAshi.open >= previousHeikinAshi.low;
     const latestCandleStrongGreen = latestHeikinAshi.close > latestHeikinAshi.open && latestHeikinAshi.open >= latestHeikinAshi.low;
 
-    const bullishIndicator = (oldCandleRed && previousCandleStrongGreen && latestCandleStrongGreen) || (oldCandleRed && previousCandleGreen && latestCandleStrongGreen);
-    const bearishIndicator = (oldCandleGreen && previousCandleStrongRed && latestCandleStrongRed) || (oldCandleGreen && previousCandleRed && latestCandleStrongRed);
+    const bullishIndicator = (oldCandleRed && previousCandleStrongGreen && latestCandleStrongGreen) || (oldCandleRed && previousCandleGreen && latestCandleStrongGreen) || (previousCandleGreen && latestCandleStrongGreen);
+    const bearishIndicator = (oldCandleGreen && previousCandleStrongRed && latestCandleStrongRed) || (oldCandleGreen && previousCandleRed && latestCandleStrongRed) || (previousCandleRed && latestCandleStrongRed);
     const buySignal = bullishIndicator && previousRsi < 50 && latestRsi > 50;
     const sellSignal = bearishIndicator && previousRsi > 50 && latestRsi < 50;
 
@@ -87,12 +87,12 @@ const heikinAshiRsiStrategy = (open, high, low, close) => {
       if (!inLongPosition) {
         // buy binance order logic here
         console.log('Long');
-        console.log('limit price: ', utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 1.5)));
-        console.log('stop price: ', utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2)));
-        console.log('stop limit price: ', utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2) - 0.02));
-        console.log('atr', utils.getAtrTicks(latestAtr, 0.01));
-        limitOrder('BTCUSDT', 'BUY', 0.2, close);
-        ocoOrder('BTCUSDT', 'SELL', 0.2, utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 1.5)), utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2)), utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2) - 0.02));
+        console.log('limit price: ', utils.format(close + latestAtr * 1.5, 2));
+        console.log('stop price: ', utils.format(close - latestAtr * 2, 2));
+        console.log('stop limit price: ', utils.format(close - latestAtr * 2 - 0.02, 2));
+        console.log('atr', latestAtr);
+        limitOrder('BTCUSDT', 'BUY', 0.001, close);
+        ocoOrder('BTCUSDT', 'SELL', 0.001, utils.format(close + latestAtr * 1.5, 2), utils.format(close - latestAtr * 2, 2), utils.format(close - latestAtr * 2 - 0.02, 2));
         inLongPosition = true;
         inShortPosition = false;
       }
@@ -102,12 +102,12 @@ const heikinAshiRsiStrategy = (open, high, low, close) => {
       if (!inShortPosition) {
         // sell binance order logic here
         console.log('Short');
-        console.log('limit price: ', utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 1.5)));
-        console.log('stop price: ', utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2)));
-        console.log('stop limit price: ', utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2) + 0.02));
-        console.log('atr', utils.getAtrTicks(utils.getAtrTicks(latestAtr, 0.01)));
-        limitOrder('BTCUSDT', 'SELL', 0.2, close);
-        ocoOrder('BTCUSDT', 'BUY', 0.2, utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 1.5)), utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2)), utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2) + 0.02));
+        console.log('limit price: ', utils.format(close - latestAtr * 1.5, 2));
+        console.log('stop price: ', utils.format(close + latestAtr * 2, 2));
+        console.log('stop limit price: ', utils.format(close + latestAtr * 2 + 0.02, 2));
+        console.log('atr', latestAtr);
+        limitOrder('BTCUSDT', 'SELL', 0.001, close);
+        ocoOrder('BTCUSDT', 'BUY', 0.001, utils.format(close - latestAtr * 1.5, 2), utils.format(close + latestAtr * 2, 2), utils.format(close + latestAtr * 2 + 0.02, 2));
         inShortPosition = true;
         inLongPosition = false;
       }

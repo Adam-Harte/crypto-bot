@@ -76,12 +76,12 @@ const moneyFlowMacdAtrStrategy = (high, low, close, volume) => {
       if (!inLongPosition) {
         // buy binance order logic here
         console.log('Long');
-        console.log('limit price: ', utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 1.5)));
-        console.log('stop price: ', utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2)));
-        console.log('stop limit price: ', utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2) - 0.02));
-        console.log('atr', utils.getAtrTicks(latestAtr, 0.01));
-        limitOrder('BTCUSDT', 'BUY', 0.2, close);
-        ocoOrder('BTCUSDT', 'SELL', 0.2, utils.format(close + utils.getAtrTicks(latestAtr, 0.01) * 1.5), utils.format(close - utils.getAtrTicks(latestAtr, 0.01) * 2), utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 2) - 0.02));
+        console.log('limit price: ', utils.format(close + latestAtr * 1.5, 2));
+        console.log('stop price: ', utils.format(close - latestAtr * 2, 2));
+        console.log('stop limit price: ', utils.format(close - latestAtr * 2 - 0.02, 2));
+        console.log('atr', latestAtr);
+        limitOrder('BTCUSDT', 'BUY', 0.001, close);
+        ocoOrder('BTCUSDT', 'SELL', 0.001, utils.format(close + latestAtr * 1.5, 2), utils.format(close - latestAtr * 2, 2), utils.format(close - latestAtr * 2 - 0.02, 2));
         inLongPosition = true;
         inShortPosition = false;
       }
@@ -91,12 +91,12 @@ const moneyFlowMacdAtrStrategy = (high, low, close, volume) => {
       if (!inShortPosition) {
         // sell binance order logic here
         console.log('Short');
-        console.log('limit price: ', utils.format(close - (utils.getAtrTicks(latestAtr, 0.01) * 1.5)));
-        console.log('stop price: ', utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2)));
-        console.log('stop limit price: ', utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2) + 0.02));
-        console.log('atr', utils.getAtrTicks(latestAtr, 0.01));
-        limitOrder('BTCUSDT', 'SELL', 0.2, close);
-        ocoOrder('BTCUSDT', 'BUY', 0.2, utils.format(close - utils.getAtrTicks(latestAtr, 0.01) * 1.5), utils.format(close + utils.getAtrTicks(latestAtr, 0.01) * 2), utils.format(close + (utils.getAtrTicks(latestAtr, 0.01) * 2) + 0.02));
+        console.log('limit price: ', utils.format(close - latestAtr * 1.5, 2));
+        console.log('stop price: ', utils.format(close + latestAtr * 2, 2));
+        console.log('stop limit price: ', utils.format(close + latestAtr * 2 + 0.02, 2));
+        console.log('atr', latestAtr);
+        limitOrder('BTCUSDT', 'SELL', 0.001, close);
+        ocoOrder('BTCUSDT', 'BUY', 0.001, utils.format(close - latestAtr * 1.5, 2), utils.format(close + latestAtr * 2, 2), utils.format(close + latestAtr * 2 + 0.02, 2));
         inShortPosition = true;
         inLongPosition = false;
       }
