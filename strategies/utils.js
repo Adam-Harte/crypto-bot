@@ -1,3 +1,5 @@
+const roundTo = require('round-to');
+
 module.exports.getSwingHigh = (highs) => {
   return Math.max(...highs);
 };
@@ -14,11 +16,11 @@ module.exports.getOrderQuantity = (balance, risk, coinPrice) => {
 };
 
 module.exports.getAtrTicks = (atr, tickSize) => {
-  return atr * tickSize;
+  return roundTo(atr * tickSize, 2);
 };
 
-module.exports.format = (number) => {
-  return parseFloat(number.toPrecision(10));
+module.exports.format = (value, decimals) => {
+  return roundTo(value, decimals);
 };
 
 module.exports.getHiddenBullishDivergence = (lows, indicator) => {
