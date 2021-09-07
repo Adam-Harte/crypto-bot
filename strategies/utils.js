@@ -1,5 +1,7 @@
 const roundTo = require('round-to');
 
+// add support level, resistance level, filter check
+
 module.exports.getSwingHigh = (highs) => {
   return Math.max(...highs);
 };
@@ -8,16 +10,32 @@ module.exports.getSwingLow = (lows) => {
   return Math.min(...lows);
 };
 
+module.exports.getHigherHigh = (highs) => {
+  return Math.max(...highs);
+};
+
+module.exports.getLowerLow = (lows) => {
+  return Math.min(...lows);
+};
+
 module.exports.getOrderQuantity = (balance, risk, coinPrice) => {
   const riskAmount = balance * risk;
-  const quantityToOrder = coinPrice / riskAmount;
+  const quantityToOrder = riskAmount / coinPrice;
 
-  return parseFloat(quantityToOrder.toPrecision(10));
+  return roundTo(quantityToOrder, 4);
 };
 
 module.exports.format = (value, decimals) => {
   return roundTo(value, decimals);
 };
+
+module.exports.getBullishEngulfing = (previousOpen, previousClose, latestOpen, latestClose) => {
+  return previousOpen > previousClose && latestClose > latestOpen && latestClose - latestOpen > previousOpen - previousClose;
+}
+
+module.exports.getBearishEngulfing = (previousOpen, previousClose, latestOpen, latestClose) => {
+  return previousClose > previousOpen && latestOpen > latestClose && latestOpen - latestClose > previousClose - previousOpen;
+}
 
 module.exports.getHiddenBullishDivergence = (lows, indicator) => {
   const sortedLows = lows.slice(lows.length - 15).sort((a, b) => a - b);
