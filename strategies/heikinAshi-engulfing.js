@@ -1,8 +1,5 @@
 const ta = require('technicalindicators');
 
-// todo: dynamically calculate precison based on filters tick size
-// todo: dynamically calculate the quantity to buy based on a percentage of total wallet funds you want to use e.g. 1%
-
 const utils = require('./utils');
 const candleSticks = require('../api/candleSticks');
 const limitOrder = require('../api/limitOrder');
