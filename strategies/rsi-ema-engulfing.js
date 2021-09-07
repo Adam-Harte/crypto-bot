@@ -29,7 +29,7 @@ candleSticks('BTCUSDT', '1h', 200).then(res => {
   opens = res.data.map(d => parseFloat(d[1]));
 });
 
-const rsiStochasticEmaStrategy = (open, close) => {
+const rsiEmaEngulfingStrategy = (open, high, low, close) => {
   inputEma200.values.push(close);
   inputRsi.values.push(close);
   closes.push(close);
@@ -50,18 +50,18 @@ const rsiStochasticEmaStrategy = (open, close) => {
     const rsiBelow = latestRsi < 50;
     const aboveEma = close > latestEma200;
     const belowEma = close < latestEma200;
-    const greenEngulfing = previousOpen > previousClose && latestClose > latestOpen && latestClose - latestOpen > previousOpen - previousClose;
-    const redEngulfing = previousClose > previousOpen && latestOpen > latestClose && latestOpen - latestClose > previousClose - previousOpen;
+    const greenEngulfing = utils.getBullishEngulfing(previousOpen, previousClose, latestOpen, latestClose);
+    const redEngulfing = utils.getBearishEngulfing(previousOpen, previousClose, latestOpen, latestClose);
 
     if (aboveEma && rsiAbove && greenEngulfing) {
       if (!inLongPosition) {
         // buy binance order logic here
         console.log('Long');
         console.log('limit price: ', utils.format(close + ((close - low) * 2), 2));
-        console.log('stop price: ', utils.format(low - 0.02, 2));
-        console.log('stop limit price: ', utils.format(low - 0.03, 2));
+        console.log('stop price: ', utils.format(low - 10, 2));
+        console.log('stop limit price: ', utils.format(low - 10 - 0.02, 2));
         limitOrder('BTCUSDT', 'BUY', 0.001, close);
-        ocoOrder('BTCUSDT', 'SELL', 0.001, utils.format(close + ((close - lowestLow) * 2), 2), utils.format(lowestLow - 0.02, 2), utils.format(lowestLow - 0.03, 2));
+        ocoOrder('BTCUSDT', 'SELL', 0.001, utils.format(close + ((close - low) * 2), 2), utils.format(low - 10, 2), utils.format(low - 10 - 0.02, 2));
         inLongPosition = true;
         inShortPosition = false;
       }
@@ -72,10 +72,10 @@ const rsiStochasticEmaStrategy = (open, close) => {
         // sell binance order logic here
         console.log('Short');
         console.log('limit price: ', utils.format(close - ((high - close) * 2), 2));
-        console.log('stop price: ', utils.format(high + 0.02, 2));
-        console.log('stop limit price: ', utils.format(high + 0.03, 2));
+        console.log('stop price: ', utils.format(high + 10, 2));
+        console.log('stop limit price: ', utils.format(high + 10 + 0.02, 2));
         limitOrder('BTCUSDT', 'SELL', 0.001, close);
-        ocoOrder('BTCUSDT', 'BUY', 0.001, utils.format(close - ((highestHigh - close) * 2), 2), utils.format(highestHigh + 0.02, 2), utils.format(highestHigh + 0.03, 2));
+        ocoOrder('BTCUSDT', 'BUY', 0.001, utils.format(close - ((high - close) * 2), 2), utils.format(high + 10, 2), utils.format(high + 10 + 0.02, 2));
         inShortPosition = true;
         inLongPosition = false;
       }
@@ -83,4 +83,4 @@ const rsiStochasticEmaStrategy = (open, close) => {
   }
 }
 
-module.exports = rsiStochasticEmaStrategy;
+module.exports = rsiEmaEngulfingStrategy;

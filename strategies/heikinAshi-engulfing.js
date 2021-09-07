@@ -1,5 +1,8 @@
 const ta = require('technicalindicators');
 
+// todo: dynamically calculate precison based on filters tick size
+// todo: dynamically calculate the quantity to buy based on a percentage of total wallet funds you want to use e.g. 1%
+
 const utils = require('./utils');
 const candleSticks = require('../api/candleSticks');
 const limitOrder = require('../api/limitOrder');
@@ -57,42 +60,46 @@ const heikinAshiEngulfingStrategy = (open, high, low, close) => {
     const latestHeikinAshi = heikinAshiResults[heikinAshiResults.length - 1];
     const latestAtr = atr[atr.length - 1];
 
-    const buySignal = previousHeikinAshi.open > previousHeikinAshi.close && latestHeikinAshi.close > latestHeikinAshi.open && latestHeikinAshi.close - latestHeikinAshi.open > previousHeikinAshi.open - previousHeikinAshi.close;
-    const sellSignal = previousHeikinAshi.close > previousHeikinAshi.open && latestHeikinAshi.open > latestHeikinAshi.close && latestHeikinAshi.open - latestHeikinAshi.close > previousHeikinAshi.close - previousHeikinAshi.open;
+    const buySignal = utils.getBullishEngulfing(previousHeikinAshi.open, previousHeikinAshi.close, latestHeikinAshi.open, latestHeikinAshi.close);
+    const sellSignal = utils.getBearishEngulfing(previousHeikinAshi.open, previousHeikinAshi.close, latestHeikinAshi.open, latestHeikinAshi.close);
 
     if (buySignal) {
       if (!inLongPosition) {
         // buy binance order logic here
+        const limitPrice = utils.format(close + latestAtr * 1.5, 2);
+        const stopPrice = utils.format(close - latestAtr * 2, 2);
+        const stopLimitPrice = utils.format(close - latestAtr * 2 - 0.02, 2);
         console.log('Long');
-        console.log('limit price: ', utils.format(close + latestAtr * 1.5, 2));
-        console.log('stop price: ', utils.format(close - latestAtr * 2, 2));
-        console.log('stop limit price: ', utils.format(close - latestAtr * 2 - 0.02, 2));
+        console.log('limit price: ', limitPrice);
+        console.log('stop price: ', stopPrice);
+        console.log('stop limit price: ', stopLimitPrice);
         console.log('atr', latestAtr);
-        limitOrder('BTCUSDT', 'BUY', 0.001, close);
-        ocoOrder('BTCUSDT', 'SELL', 0.001, utils.format(close + latestAtr * 1.5, 2), utils.format(close - latestAtr * 2, 2), utils.format(close - latestAtr * 2 - 0.02, 2));
-        inLongPosition = true;
-        inShortPosition = false;
-      }
-
-      if (inLongPosition) {
-        console.log('close: ', close);
-        console.log('low: ', low);
-        console.log('high: ', high);
+        if (limitPrice - close > close * 0.001) {
+          limitOrder('BTCUSDT', 'BUY', 0.001, close);
+          ocoOrder('BTCUSDT', 'SELL', 0.001, limitPrice, stopPrice, stopLimitPrice);
+          inLongPosition = true;
+          inShortPosition = false;
+        }
       }
     }
 
     if (sellSignal) {
       if (!inShortPosition) {
         // sell binance order logic here
+        const limitPrice = utils.format(close - latestAtr * 1.5, 2);
+        const stopPrice = utils.format(close + latestAtr * 2, 2);
+        const stopLimitPrice = utils.format(close + latestAtr * 2 + 0.02, 2);
         console.log('Short');
-        console.log('limit price: ', utils.format(close - latestAtr * 1.5, 2));
-        console.log('stop price: ', utils.format(close + latestAtr * 2, 2));
-        console.log('stop limit price: ', utils.format(close + latestAtr * 2 + 0.02, 2));
+        console.log('limit price: ', limitPrice);
+        console.log('stop price: ', stopPrice);
+        console.log('stop limit price: ', stopLimitPrice);
         console.log('atr', latestAtr);
-        limitOrder('BTCUSDT', 'SELL', 0.001, close);
-        ocoOrder('BTCUSDT', 'BUY', 0.001, utils.format(close - latestAtr * 1.5, 2), utils.format(close + latestAtr * 2, 2), utils.format(close + latestAtr * 2 + 0.02, 2));
-        inShortPosition = true;
-        inLongPosition = false;
+        if (close - limitPrice > close * 0.001) {
+          limitOrder('BTCUSDT', 'SELL', 0.001, close);
+          ocoOrder('BTCUSDT', 'BUY', 0.001, limitPrice, stopPrice, stopLimitPrice);
+          inShortPosition = true;
+          inLongPosition = false;
+        }
       }
     }
   }
