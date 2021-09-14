@@ -1,10 +1,10 @@
 const ta = require('technicalindicators');
 const { getFibRetracement } = require('fib-retracement');
 
-const utils = require('./utils');
-const candleSticks = require('../api/candleSticks');
-const limitOrder = require('../api/limitOrder');
-const ocoOrder = require('../api/ocoOrder');
+const utils = require('../utils');
+const candleSticks = require('../../api/candleSticks');
+const limitOrder = require('../../api/limitOrder');
+const ocoOrder = require('../../api/ocoOrder');
 
 const inputEma = {
   period: 50,

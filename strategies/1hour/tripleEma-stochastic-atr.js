@@ -1,9 +1,9 @@
 const ta = require('technicalindicators');
 
-const utils = require('./utils');
-const candleSticks = require('../api/candleSticks');
-const limitOrder = require('../api/limitOrder');
-const ocoOrder = require('../api/ocoOrder');
+const utils = require('../utils');
+const candleSticks = require('../../api/candleSticks');
+const limitOrder = require('../../api/limitOrder');
+const ocoOrder = require('../../api/ocoOrder');
 
 let inLongPosition = false;
 let inShortPosition = false;
@@ -36,7 +36,6 @@ const inputAtr = {
   low: [],
   close: [],
   period: 14,
-  format: v => parseFloat(v.toPrecision(8))
 };
 
 candleSticks('BTCUSDT', '1h', 50).then(res => {
@@ -51,7 +50,7 @@ candleSticks('BTCUSDT', '1h', 50).then(res => {
   inputAtr.close = res.data.map(d => parseFloat(d[4]));
 });
 
-const emaStochasticAtrStrategy = (high, low, close) => {
+const tripleEmaStochasticAtrStrategy = (high, low, close) => {
   inputEma8.values.push(close);
   inputEma14.values.push(close);
   inputEma50.values.push(close);
@@ -74,12 +73,14 @@ const emaStochasticAtrStrategy = (high, low, close) => {
     const latestStochastic = stochastic[stochastic.length - 1];
     const latestAtr = atr[atr.length - 1];
 
+    const aboveEma = close > latestEma8;
+    const belowEma = close < latestEma8;
     const emaUpwardTrend = latestEma8 > latestEma14 && latestEma14 > latestEma50;
-    const stochasticCrossUp = previousStochastic.k < previousStochastic.d && latestStochastic.k > latestStochastic.d;
     const emaDownwardTrend = latestEma50 > latestEma14 && latestEma14 > latestEma8;
+    const stochasticCrossUp = previousStochastic.k < previousStochastic.d && latestStochastic.k > latestStochastic.d;
     const stochasticCrossDown = previousStochastic.k > previousStochastic.d && latestStochastic.k < latestStochastic.d;
 
-    if (emaUpwardTrend && stochasticCrossUp) {
+    if (aboveEma && emaUpwardTrend && stochasticCrossUp) {
       if (!inLongPosition) {
         // buy binance order logic here
         console.log('Long');
@@ -94,7 +95,7 @@ const emaStochasticAtrStrategy = (high, low, close) => {
       }
     }
 
-    if (emaDownwardTrend && stochasticCrossDown) {
+    if (belowEma && emaDownwardTrend && stochasticCrossDown) {
       if (!inShortPosition) {
         // sell binance order logic here
         console.log('Short');
@@ -111,4 +112,4 @@ const emaStochasticAtrStrategy = (high, low, close) => {
   }
 }
 
-module.exports = emaStochasticAtrStrategy;
+module.exports = tripleEmaStochasticAtrStrategy;
