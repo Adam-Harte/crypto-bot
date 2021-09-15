@@ -68,8 +68,8 @@ const fibonacciEmaRsiStrategy = (open, high, low, close) => {
 
     const bullishDivergence = utils.getHiddenBullishDivergence(lows, rsi);
     const BearishDivergence = utils.getHiddenBearishDivergence(highs, rsi);
-    const aboveEma = close > latestEma;
-    const belowEma = close < latestEma;
+    const aboveEma = low > latestEma;
+    const belowEma = high < latestEma;
     const aboveFib = close > fib['0.5'];
     const belowFib = close < fib['0.5'];
     const greenEngulfing = utils.getBullishEngulfing(previousOpen, previousClose, latestOpen, latestClose);

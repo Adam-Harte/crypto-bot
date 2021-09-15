@@ -85,8 +85,8 @@ const doubleEmaRsiStochasticStrategy = (high, low, close) => {
     const isMarketTrending = (latestEma200 - 100) > latestEma50 || (latestEma200 + 100) < latestEma50;
     const stochasticCrossUp = previousStochastic.k < previousStochastic.d && latestStochastic.k > latestStochastic.d;
     const stochasticCrossDown = previousStochastic.k > previousStochastic.d && latestStochastic.k < latestStochastic.d;
-    const aboveEma = close > latestEma200 && close > latestEma50;
-    const belowEma = close < latestEma200 && close < latestEma50;
+    const aboveEma = low > latestEma200 && low > latestEma50;
+    const belowEma = high < latestEma200 && high < latestEma50;
 
     if (inLongPosition || inShortPosition) {
       queryOco(orderListId).then(res => {

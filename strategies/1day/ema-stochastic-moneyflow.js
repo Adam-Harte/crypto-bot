@@ -100,8 +100,8 @@ const emaStochasticMoneyflowStrategy = (high, low, close, volume) => {
 
     const aboveStochastic = latestStochastic.k > 95;
     const belowStochastic = latestStochastic < 5;
-    const aboveEma = close > latestEma200;
-    const belowEma = close < latestEma200;
+    const aboveEma = low > latestEma200;
+    const belowEma = high < latestEma200;
     const moneyFlowUpwardTrend = latestMoneyFlow > 50;
     const moneyFlowDownwardTrend = latestMoneyFlow < 50;
 

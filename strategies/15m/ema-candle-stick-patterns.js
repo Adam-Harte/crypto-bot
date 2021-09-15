@@ -62,8 +62,8 @@ const emaCandleStickPatternStrategy = (open, high, low, close) => {
     const previousOpen = opens[opens.length - 2];
     const latestOpen = opens[opens.length - 1];
 
-    const aboveEma200 = close > latestEma200;
-    const belowEma200 = close < latestEma200;
+    const aboveEma200 = low > latestEma200;
+    const belowEma200 = high < latestEma200;
     const touchingEma50 = high >= latestEma50 && close < latestEma50;
 
     const bullishEngulfing = utils.getBullishEngulfing(oldOpen, oldClose, previousOpen, previousClose, latestOpen, latestClose);

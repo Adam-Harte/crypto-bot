@@ -63,8 +63,8 @@ const rsiEmaEngulfingStrategy = (open, high, low, close) => {
 
     const rsiAbove = latestRsi > 50;
     const rsiBelow = latestRsi < 50;
-    const aboveEma = close > latestEma200;
-    const belowEma = close < latestEma200;
+    const aboveEma = low > latestEma200;
+    const belowEma = high < latestEma200;
     const greenEngulfing = utils.getBullishEngulfing(oldOpen, oldClose, previousOpen, previousClose, latestOpen, latestClose);
     const redEngulfing = utils.getBearishEngulfing(oldOpen, oldClose, previousOpen, previousClose, latestOpen, latestClose);
 

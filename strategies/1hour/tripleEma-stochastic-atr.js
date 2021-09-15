@@ -86,8 +86,8 @@ const tripleEmaStochasticAtrStrategy = (high, low, close) => {
     const latestStochastic = stochastic[stochastic.length - 1];
     const latestAtr = atr[atr.length - 1];
 
-    const aboveEma = close > latestEma8;
-    const belowEma = close < latestEma8;
+    const aboveEma = low > latestEma8;
+    const belowEma = high < latestEma8;
     const emaUpwardTrend = latestEma8 > latestEma14 && latestEma14 > latestEma50;
     const emaDownwardTrend = latestEma50 > latestEma14 && latestEma14 > latestEma8;
     const stochasticCrossUp = previousStochastic.k < previousStochastic.d && latestStochastic.k > latestStochastic.d;

@@ -57,8 +57,8 @@ const moneyFlowMacdAtrStrategy = (high, low, close, volume) => {
     const latestEma200 = ema200[ema200.length - 1];
     const latestMoneyFlow = moneyFlow[moneyFlow.length - 1];
 
-    const aboveEma = close > latestEma200;
-    const belowEma = close < latestEma200;
+    const aboveEma = low > latestEma200;
+    const belowEma = high < latestEma200;
     const moneyFlowOverBought = latestMoneyFlow > 80;
     const moneyFlowOverSold = latestMoneyFlow < 20;
 

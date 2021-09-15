@@ -75,8 +75,8 @@ const rsiStochasticEmaStrategy = (high, low, close) => {
 
     const stochasticCrossUp = previousStochastic.k < previousStochastic.d && latestStochastic.k > latestStochastic.d;
     const stochasticCrossDown = previousStochastic.k > previousStochastic.d && latestStochastic.k < latestStochastic.d;
-    const aboveEma = close > latestEma200;
-    const belowEma = close < latestEma200;
+    const aboveEma = low > latestEma200;
+    const belowEma = high < latestEma200;
 
     if (inLongPosition || inShortPosition) {
       queryOco(orderListId).then(res => {
