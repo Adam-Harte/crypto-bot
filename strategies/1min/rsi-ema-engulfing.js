@@ -10,6 +10,7 @@ const queryOco = require('../../api/queryOco');
 
 let inLongPosition = false;
 let inShortPosition = false;
+let balance = 0;
 let orderListId = 0;
 let orderQuantity = 0;
 let tickPrecision = 0;
@@ -85,7 +86,7 @@ const rsiEmaEngulfingStrategy = (open, high, low, close) => {
 
         utils.logPosition('Long', limitPrice, stopPrice, stopLimitPrice);
 
-        if (utils.isProfitCoveringTradeFee('SHORT', limitPrice, close)) {
+        if (utils.isProfitCoveringTradeFee('LONG', limitPrice, close)) {
           account()
             .then(acc => {
               balance = parseFloat(acc.data.balances.find(b => b.asset === 'USDT').free);

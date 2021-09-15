@@ -1,12 +1,19 @@
 const ta = require('technicalindicators');
 
 const utils = require('../utils');
+const account = require('../../api/account');
+const exchangeInfo = require('../../api/exchangeInfo');
 const candleSticks = require('../../api/candleSticks');
 const limitOrder = require('../../api/limitOrder');
 const ocoOrder = require('../../api/ocoOrder');
+const queryOco = require('../../api/queryOco');
 
 let inLongPosition = false;
 let inShortPosition = false;
+let balance = 0;
+let orderListId = 0;
+let orderQuantity = 0;
+let tickPrecision = 0;
 
 const inputEma200 = {
   period: 200,
@@ -20,6 +27,12 @@ const inputMoneyFlow = {
   volume: [],
   period: 14
 };
+
+exchangeInfo('BTCUSDT').then(res => {
+  const filters = res.data.symbols[0].filters;
+  const priceFilter = filters.find(filter => filter.filterType === 'PRICE_FILTER');
+  tickPrecision = utils.getTickSizePrecision(priceFilter.tickSize);
+});
 
 candleSticks('BTCUSDT', '5m', 200).then(res => {
   inputEma200.values = res.data.map(d => parseFloat(d[4]));
@@ -49,33 +62,63 @@ const moneyFlowMacdAtrStrategy = (high, low, close, volume) => {
     const moneyFlowOverBought = latestMoneyFlow > 80;
     const moneyFlowOverSold = latestMoneyFlow < 20;
 
+    if (inLongPosition || inShortPosition) {
+      queryOco(orderListId).then(res => {
+        inLongPosition = !utils.isOcoOrderFilled(res.data.listOrderStatus);
+        inShortPosition = !utils.isOcoOrderFilled(res.data.listOrderStatus);
+      })
+    }
+
     if (aboveEma && moneyFlowOverSold) {
       if (!inLongPosition) {
         // buy binance order logic here
-        console.log('Long');
-        console.log('limit price: ', utils.format(close + (close - (close - latestAtr * 2)) * 2, 2));
-        console.log('stop price: ', utils.format(close - latestAtr * 2, 2));
-        console.log('stop limit price: ', utils.format(close - latestAtr * 2 - 0.02, 2));
-        console.log('atr', latestAtr);
-        limitOrder('BTCUSDT', 'BUY', 0.001, close);
-        ocoOrder('BTCUSDT', 'SELL', 0.001, utils.format(close + (close - (close - latestAtr * 2)) * 2, 2), utils.format(close - latestAtr * 2, 2), utils.format(close - latestAtr * 2 - 0.02, 2));
-        inLongPosition = true;
-        inShortPosition = false;
+        const limitPrice = utils.format(close + (close - (close - latestAtr * 2)) * 2, tickPrecision);
+        const stopPrice = utils.format(close - latestAtr * 2, tickPrecision);
+        const stopLimitPrice = utils.format(close - latestAtr * 2 - 0.02, tickPrecision);
+
+        utils.logPosition('Long', limitPrice, stopPrice, stopLimitPrice);
+
+        if (utils.isProfitCoveringTradeFee('LONG', limitPrice, close)) {
+          account()
+            .then(acc => {
+              balance = parseFloat(acc.data.balances.find(b => b.asset === 'USDT').free);
+              orderQuantity = utils.getOrderQuantity(balance, 0.01, close);
+              return limitOrder('BTCUSDT', 'BUY', orderQuantity, close);
+            }).then(order => {
+              return ocoOrder('BTCUSDT', 'SELL', orderQuantity, limitPrice, stopPrice, stopLimitPrice);
+            })
+            .then(ocoOrder => {
+              orderListId = ocoOrder.data.orderListId;
+              inLongPosition = true;
+            });
+        }
       }
     }
 
     if (belowEma && moneyFlowOverBought) {
       if (!inShortPosition) {
         // sell binance order logic here
-        console.log('Short');
-        console.log('limit price: ', utils.format(close - ((close + latestAtr * 2) - close) * 2, 2));
-        console.log('stop price: ', utils.format(close + latestAtr * 2, 2));
-        console.log('stop limit price: ', utils.format(close + latestAtr * 2 + 0.02, 2));
-        console.log('atr', latestAtr);
-        limitOrder('BTCUSDT', 'SELL', 0.001, close);
-        ocoOrder('BTCUSDT', 'BUY', 0.001, utils.format(close - ((close + latestAtr * 2) - close) * 2, 2), utils.format(close + latestAtr * 2, 2), utils.format(close + latestAtr * 2 + 0.02, 2));
-        inShortPosition = true;
-        inLongPosition = false;
+        const limitPrice = utils.format(close - ((close + latestAtr * 2) - close) * 2, tickPrecision);
+        const stopPrice = utils.format(close + latestAtr * 2, tickPrecision);
+        const stopLimitPrice = utils.format(close + latestAtr * 2 + 0.02, tickPrecision);
+
+        utils.logPosition('Short', limitPrice, stopPrice, stopLimitPrice);
+
+        if (utils.isProfitCoveringTradeFee('SHORT', limitPrice, close)) {
+          account()
+            .then(acc => {
+              balance = parseFloat(acc.data.balances.find(b => b.asset === 'USDT').free);
+              orderQuantity = utils.getOrderQuantity(balance, 0.01, close);
+              return limitOrder('BTCUSDT', 'SELL', orderQuantity, close);
+            })
+            .then(order => {
+              return ocoOrder('BTCUSDT', 'BUY', orderQuantity, limitPrice, stopPrice, stopLimitPrice);
+            })
+            .then(ocoOrder => {
+              orderListId = ocoOrder.data.orderListId;
+              inShortPosition = true;
+            });
+        }
       }
     }
   }
