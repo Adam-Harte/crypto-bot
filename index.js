@@ -1,8 +1,12 @@
 const webSocket = require('ws');
 
-const heikinAshiRsiStrategy = require('./strategies/heikinAshi-rsi');
+const rsiEmaEngulfingStrategy = require('./strategies/1min/rsi-ema-engulfing');
 
-const stream = 'wss://testnet.binance.vision/ws/btcusdt@kline_15m';
+// todo: add error handling for when the api requests fail and binance requires us to stop communicating for a period of time
+// todo: add utils method to ensure orders pass all filter chcks before placing order
+// todo: seperate utils into seperate files and add utils for making trades and support and resistance levels
+
+const stream = 'wss://testnet.binance.vision/ws/btcusdt@kline_1m';
 
 const connect = (stream, reconnectInterval) => {
   const ws = new webSocket(stream);
@@ -21,13 +25,13 @@ const connect = (stream, reconnectInterval) => {
     const close = parseFloat(candle['c']);
 
     if (isCandleClosed) {
-      heikinAshiRsiStrategy(open, high, low, close);
+      rsiEmaEngulfingStrategy(open, high, low, close);
     }
   });
 
   ws.on('close', () => {
     console.log('closed connection');
-    setTimeout(connect, reconnectInterval);
+    setTimeout(() => connect(stream, reconnectInterval), reconnectInterval);
   });
 }
 
