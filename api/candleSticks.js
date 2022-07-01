@@ -5,11 +5,11 @@ const getCandleSticksRequest = async (params) => {
   try {
     const res = await axios({
       method: "GET",
-      url: 'https://testnet.binance.vision/api/v3/klines',
+      url: 'https://api.binance.com/api/v3/klines',
       params: {
         ...params
       },
-      headers: { "X-MBX-APIKEY": process.env.BINANCE_TEST_API_KEY },
+      // headers: { "X-MBX-APIKEY": process.env.BINANCE_TEST_API_KEY },
     });
     return res;
   } catch (error) {
@@ -17,11 +17,14 @@ const getCandleSticksRequest = async (params) => {
   }
 };
 
-const candleSticks = (symbol, interval, limit) => {
+const candleSticks = (symbol, interval, limit, startTime = undefined) => {
   return getCandleSticksRequest({
     symbol,
     interval,
-    limit
+    limit,
+    ...(startTime && {
+      startTime
+    })
   });
 };
 
